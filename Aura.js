@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,14 +10,13 @@ const Stack = createStackNavigator();
 
 const Aura = (props) => {
   // AsyncStorage.clear();
-  const [token, setToken] = useState();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUserName, setCurrentUserName] = useState(null);
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [currentTheme, setCurrentTheme] = useState(3);
   const [circleText, setCircleText] = useState([]);
   const [mood, setMood] = useState({
-    mood: 3,
+    mood: 4,
     activites: [],
     title: '',
     content: '',
@@ -46,12 +45,6 @@ const Aura = (props) => {
     mood,
     setMood,
   };
-  useEffect(() => {
-    (async () => {
-      const userToken = JSON.parse(await AsyncStorage.getItem('aura_token'));
-      setToken(userToken);
-    })();
-  }, []);
   return (
     <UserContext.Provider value={userContextValue}>
       <ThemeContext.Provider value={themeContextValue}>

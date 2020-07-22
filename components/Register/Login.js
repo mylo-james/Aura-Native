@@ -1,11 +1,10 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Text, Alert, View} from 'react-native';
+import {Alert, View} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
-import Email from './Email';
 
 const LoginWrapper = styled.View`
   flex: 2;
@@ -44,7 +43,6 @@ const Login = ({setComp}) => {
     setCurrentUserId,
     setCurrentUserName,
     setCurrentUserEmail,
-    currentUserName,
     currentUserEmail,
   } = useContext(UserContext);
 

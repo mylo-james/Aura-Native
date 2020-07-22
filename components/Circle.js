@@ -11,8 +11,8 @@ const CircleWrapper = styled.View`
 `;
 
 const CircleImg = styled.Image`
-  flex: 7;
-  width: 50%;
+  flex: 6;
+  width: 40%;
   height: 100%;
   border-radius: 200px;
   margin-bottom: 50px;
@@ -20,7 +20,6 @@ const CircleImg = styled.Image`
 
 const CircleTextWrapper = styled.View`
   flex: 1;
-  justify-content: center;
   align-items: center;
 `;
 
