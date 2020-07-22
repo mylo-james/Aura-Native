@@ -25,6 +25,7 @@ const CircleTextWrapper = styled.View`
 
 const CircleText = styled.Text`
   font-size: 22px;
+  color: #900;
 `;
 const Circle = (props) => {
   const {circleText} = useContext(CircleContext);

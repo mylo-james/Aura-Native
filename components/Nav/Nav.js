@@ -10,6 +10,7 @@ const NavWrapper = styled.View`
   height: 10%;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  border: #900 2px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -37,7 +38,7 @@ const Center = styled.View`
   align-items: center;
   width: 75px;
   height: 75px;
-  border: #262626 2px;
+  border: #900 2px;
   border-radius: 10px;
   background-color: white;
   left: 41%;

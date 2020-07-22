@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {CircleContext, UserContext, MoodContext} from '../../context';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import StyledButton from '../StyledButton';
 import Activity from './Activity';
 
 const RangeWrapper = styled.View`
@@ -52,7 +53,7 @@ const Range = ({setComp}) => {
         minimumTrackTintColor="#FFFFFF"
         maximumTrackTintColor="#900"
       />
-      <Button
+      <StyledButton
         onPress={() => {
           setComp(<Activity setComp={setComp} />);
         }}
