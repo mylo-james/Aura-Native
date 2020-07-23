@@ -4,10 +4,15 @@ import styled from 'styled-components';
 import Circle from '../Circle';
 import Range from './Range';
 
-const MoodWrapper = styled.SafeAreaView`
-  height: 100%;
+const MoodWrapper = styled.View`
+  position: absolute;
+  background-color: #fff;
+  padding: 20px;
+  bottom: 0;
+  border-radius: 10px;
+  height: 80%;
   width: 100%;
-  z-index: 3;
+  box-shadow: 0 2px 3px #222;
 `;
 const Mood = () => {
   const [comp, setComp] = useState();
@@ -15,12 +20,7 @@ const Mood = () => {
     setComp(<Range setComp={setComp} />);
   }, []);
 
-  return (
-    <MoodWrapper>
-      <Circle />
-      {comp}
-    </MoodWrapper>
-  );
+  return <MoodWrapper>{comp}</MoodWrapper>;
 };
 
 export default Mood;

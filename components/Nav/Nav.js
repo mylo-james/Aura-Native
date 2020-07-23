@@ -8,14 +8,13 @@ const NavWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
   height: 10%;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border: #900 2px;
+  padding-bottom: 10px;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: white;
+  background-color: #673ab7;
   z-index: 2;
+  box-shadow: 0 2px 3px #222;
 `;
 
 const Left = styled.View`
@@ -36,14 +35,14 @@ const Center = styled.View`
   position: absolute;
   justify-content: center;
   align-items: center;
-  width: 75px;
-  height: 75px;
-  border: #900 2px;
-  border-radius: 10px;
-  background-color: white;
-  left: 41%;
-  top: -25px;
+  width: 65px;
+  height: 65px;
+  border-radius: 50px;
+  background-color: #9e9e9e;
+  left: 43%;
+  top: -15px;
   z-index: 3;
+  box-shadow: 0 2px 3px #222;
 `;
 const Nav = () => {
   const navigation = useNavigation();
@@ -54,7 +53,7 @@ const Nav = () => {
       }}
       name="view-list"
       size={30}
-      color="#900"
+      color="#fff"
     />
   );
   const resourcesIcon = (
@@ -64,7 +63,7 @@ const Nav = () => {
       }}
       name="newspaper"
       size={30}
-      color="#900"
+      color="#fff"
     />
   );
   const statsIcon = (
@@ -74,7 +73,7 @@ const Nav = () => {
       }}
       name="chart-areaspline-variant"
       size={30}
-      color="#900"
+      color="#fff"
     />
   );
   const accountIcon = (
@@ -84,7 +83,7 @@ const Nav = () => {
       }}
       name="account-box"
       size={30}
-      color="#900"
+      color="#fff"
     />
   );
   const journalIcon = (
@@ -92,9 +91,9 @@ const Nav = () => {
       onPress={() => {
         navigation.navigate('Mood');
       }}
-      name="pencil-plus"
+      name="plus"
       size={30}
-      color="#900"
+      color="#fff"
     />
   );
   return (

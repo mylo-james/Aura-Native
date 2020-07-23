@@ -3,18 +3,32 @@ import styled from 'styled-components/native';
 import {Text, Button} from 'react-native';
 import Name from './Name';
 import Login from './Login';
+import StyledButton from '../StyledButton';
 
 const RegisterWrapper = styled.View`
-  flex: 2;
-  width: 70%;
-  justify-content: space-evenly;
+  position: absolute;
+  justify-content: space-around;
   align-items: center;
-  margin: auto;
-  margin-top: 20px;
+  background-color: #fff;
+  padding: 20px;
+  padding-top: 50px;
+  bottom: 0;
+  border-radius: 10px;
+  height: 80%;
+  width: 100%;
+  box-shadow: 0 2px 3px #222;
+`;
+
+const Header = styled.Text`
+  color: #673ab7;
+  font-size: 25px;
 `;
 
 const SwitchWrapper = styled.View`
-  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0.3;
+  width: 100%;
 `;
 
 const Register = (props) => {
@@ -25,12 +39,14 @@ const Register = (props) => {
   }, [setComp]);
   return (
     <RegisterWrapper>
+      <Header>Welcome to Aura</Header>
+      <Header>Your Daily Mood Tracker</Header>
       {comp}
 
       {register ? (
         <SwitchWrapper>
           <Text>I already have an account</Text>
-          <Button
+          <StyledButton
             onPress={() => {
               setRegister(false);
               setComp(<Login setComp={setComp} />);
@@ -41,7 +57,7 @@ const Register = (props) => {
       ) : (
         <SwitchWrapper>
           <Text>I don't have an account</Text>
-          <Button
+          <StyledButton
             onPress={() => {
               setRegister(true);
               setComp(<Name setComp={setComp} />);

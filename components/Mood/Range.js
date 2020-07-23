@@ -8,16 +8,42 @@ import StyledButton from '../StyledButton';
 import Activity from './Activity';
 
 const RangeWrapper = styled.View`
-  flex: 2;
+  flex: 1;
   width: 100%;
   justify-content: space-evenly;
   align-items: center;
   padding-bottom: 100px;
 `;
 
+const EmojiWrapper = styled.View`
+  flex: 0.65;
+  padding: 20px;
+  justify-content: space-evenly;
+  border-radius: 10px;
+  align-items: center;
+  background-color: #673ab7;
+  width: 70%;
+  box-shadow: 0 2px 3px #222;
+`;
+
+const EmojiText = styled.Text`
+  color: white;
+  font-size: 25px;
+`;
+
 const style = {
   range: {
     width: '60%',
+    height: '20%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
 };
 const Range = ({setComp}) => {
@@ -25,11 +51,11 @@ const Range = ({setComp}) => {
   const {currentUserName} = useContext(UserContext);
   const {mood, setMood} = useContext(MoodContext);
   const Emoji = [
-    <Icon name="emoticon-cry-outline" size={150} color="#900" />,
-    <Icon name="emoticon-sad-outline" size={150} color="#900" />,
-    <Icon name="emoticon-neutral-outline" size={150} color="#900" />,
-    <Icon name="emoticon-happy-outline" size={150} color="#900" />,
-    <Icon name="emoticon-excited-outline" size={150} color="#900" />,
+    <Icon name="emoticon-cry-outline" size={150} color="#fff" />,
+    <Icon name="emoticon-sad-outline" size={150} color="#fff" />,
+    <Icon name="emoticon-neutral-outline" size={150} color="#fff" />,
+    <Icon name="emoticon-happy-outline" size={150} color="#fff" />,
+    <Icon name="emoticon-excited-outline" size={150} color="#fff" />,
   ];
 
   const MoodText = ['Terrible', 'Not Good', 'Fine', 'Good', 'Great'];
@@ -39,8 +65,10 @@ const Range = ({setComp}) => {
   }, [currentUserName, setCircleText]);
   return (
     <RangeWrapper>
-      {Emoji[mood.mood - 1]}
-      <Text>{MoodText[mood.mood - 1]}</Text>
+      <EmojiWrapper>
+        {Emoji[mood.mood - 1]}
+        <EmojiText>{MoodText[mood.mood - 1]}</EmojiText>
+      </EmojiWrapper>
       <Slider
         style={style.range}
         minimumValue={1}
@@ -50,8 +78,8 @@ const Range = ({setComp}) => {
         onValueChange={(value) => {
           setMood({...mood, mood: value});
         }}
-        minimumTrackTintColor="#FFFFFF"
-        maximumTrackTintColor="#900"
+        minimumTrackTintColor="#673AB7"
+        maximumTrackTintColor="#fff"
       />
       <StyledButton
         onPress={() => {

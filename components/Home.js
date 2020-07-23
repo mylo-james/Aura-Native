@@ -10,13 +10,12 @@ import Stats from './Stats/Stats';
 import Mood from './Mood/Mood';
 import Resources from './Resources/Resources';
 import Account from './Account/Account';
+import TopNav from './Nav/TopNav';
 
 const HomeWrapper = styled.View`
-  background-color: red;
   position: relative;
   flex: 1;
   width: 100%;
-  height: 100%;
 `;
 
 const Home = ({navigation}) => {
@@ -60,11 +59,13 @@ const Home = ({navigation}) => {
   return (
     <HomeWrapper>
       <Nav />
+      <TopNav />
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
+          cardStyle: {backgroundColor: 'transparent'},
         }}>
-        <Stack.Screen name="Mood" component={Mood} />
+        <Stack.Screen style={{height: '70%'}} name="Mood" component={Mood} />
         <Stack.Screen name="Feed" component={Feed} />
         <Stack.Screen name="Stats" component={Stats} />
         <Stack.Screen name="Resources" component={Resources} />

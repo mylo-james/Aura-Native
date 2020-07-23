@@ -4,12 +4,13 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import Home from './components/Home';
 import Auth from './components/Auth';
+
 import {UserContext, ThemeContext, CircleContext, MoodContext} from './context';
 
 const Stack = createStackNavigator();
 
 const Aura = (props) => {
-  AsyncStorage.clear();
+  // AsyncStorage.clear();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUserName, setCurrentUserName] = useState(null);
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
@@ -50,7 +51,7 @@ const Aura = (props) => {
       <ThemeContext.Provider value={themeContextValue}>
         <CircleContext.Provider value={circleContextValue}>
           <MoodContext.Provider value={moodContextValue}>
-            <NavigationContainer>
+            <NavigationContainer style={{backgroundColor: 'transparent'}}>
               <Stack.Navigator
                 screenOptions={{
                   headerShown: false,

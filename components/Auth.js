@@ -3,20 +3,20 @@ import {SafeAreaView} from 'react-native';
 import styled from 'styled-components/native';
 import Circle from './Circle';
 import Register from './Register/Register';
+import TopNav from './Nav/TopNav';
 
 const AuthWrapper = styled.View`
+  position: relative;
+  flex: 1;
   width: 100%;
-  height: 100%;
 `;
 
 const Auth = () => {
   return (
-    <SafeAreaView>
-      <AuthWrapper>
-        <Circle />
-        <Register />
-      </AuthWrapper>
-    </SafeAreaView>
+    <AuthWrapper>
+      <TopNav />
+      <Register />
+    </AuthWrapper>
   );
 };
 

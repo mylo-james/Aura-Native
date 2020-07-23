@@ -6,6 +6,7 @@ import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
 import Email from './Email';
+import StyledButton from '../StyledButton';
 
 const PasswordWrapper = styled.View`
   flex: 2;
@@ -15,24 +16,29 @@ const PasswordWrapper = styled.View`
 `;
 
 const PasswordText = styled.Text`
-  font-size: 20px;
-  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
 `;
 
 const PasswordInput = styled.TextInput`
-  margin-top: 20px;
+  background-color: white;
+  border: #9e9e9e 1px;
+  border-radius: 5px;
+  width: 80%;
   font-size: 20px;
-  border-bottom-color: #dfdfdf;
-  border-bottom-width: 1px;
-  margin-bottom: 5px;
-`;
-
-const PasswordButton = styled.Button`
-  font-size: 40px;
+  margin-bottom: 10px;
+  padding: 5px;
 `;
 
 const QuestionWrapper = styled.View`
-  width: 100%;
+  flex: 0.5;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 80%;
+  background-color: #673ab7;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 3px #222;
 `;
 
 const Password = ({setComp}) => {
@@ -103,16 +109,17 @@ const Password = ({setComp}) => {
           onChangeText={(text) => handleUpdate(text, 'password')}
           placeholder="Password"
         />
-        <Text>1 Upper, 1 Lower, 1 Digit,</Text>
-        <Text>1 Symbol, 8 Characters</Text>
+        <PasswordText>1 Upper, 1 Lower, 1 Digit,</PasswordText>
+        <PasswordText>1 Symbol, 8 Characters</PasswordText>
         <PasswordInput
           onChangeText={(text) => handleUpdate(text, 'confrim')}
           placeholder="Confirm Password"
         />
       </QuestionWrapper>
-      <View>
-        <PasswordButton onPress={handleSubmit} title="Continue" />
-        <PasswordButton onPress={handleBack} title="Back" />
+      <View
+        style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+        <StyledButton onPress={handleSubmit} title="Continue" />
+        <StyledButton onPress={handleBack} title="Back" />
       </View>
     </PasswordWrapper>
   );

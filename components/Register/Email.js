@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import Name from './Name';
 import Password from './Password';
+import StyledButton from '../StyledButton';
 
 const EmailWrapper = styled.View`
   flex: 2;
@@ -13,43 +14,51 @@ const EmailWrapper = styled.View`
 `;
 
 const EmailText = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
+  color: #fff;
 `;
 
 const EmailInput = styled.TextInput`
-  margin-top: 20px;
+  background-color: white;
+  border: #9e9e9e 1px;
+  border-radius: 5px;
+  width: 80%;
   font-size: 20px;
-  border-bottom-color: #dfdfdf;
-  border-bottom-width: 1px;
-`;
-
-const EmailButton = styled.Button`
-  font-size: 40px;
+  margin-bottom: 10px;
+  padding: 5px;
 `;
 
 const QuestionWrapper = styled.View`
-  width: 100%;
+  flex: 0.5;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 80%;
+  background-color: #673ab7;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 3px #222;
 `;
 
 const Email = ({setComp}) => {
   const [input, setInput] = useState(null);
 
   const {setCircleText} = useContext(CircleContext);
-  const {currentUserName, setCurrentUserEmail} = useContext(UserContext);
+  const {currentUserName, currentUserEmail, setCurrentUserEmail} = useContext(
+    UserContext,
+  );
 
   useEffect(() => {
     setCircleText([`Nice to meet you, ${currentUserName}`]);
   }, [currentUserName, setCircleText]);
 
   const handleUpdate = (text) => {
-    setInput(text);
+    setCurrentUserEmail(text);
   };
 
   const handleContinue = () => {
-    if (!input) {
+    if (!currentUserEmail) {
       Alert.alert('Invalid Response', 'Please provide an email.');
     } else {
-      setCurrentUserEmail(input.toLowerCase());
       setComp(<Password setComp={setComp} />);
     }
   };
@@ -64,11 +73,13 @@ const Email = ({setComp}) => {
         <EmailInput
           onChangeText={(text) => handleUpdate(text)}
           placeholder="My email is..."
+          value={currentUserEmail}
         />
       </QuestionWrapper>
-      <View>
-        <EmailButton onPress={handleContinue} title="Continue" />
-        <EmailButton onPress={handleBack} title="Back" />
+      <View
+        style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+        <StyledButton onPress={handleContinue} title="Continue" />
+        <StyledButton onPress={handleBack} title="Back" />
       </View>
     </EmailWrapper>
   );

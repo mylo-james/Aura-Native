@@ -5,6 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
+import StyledButton from '../StyledButton';
 
 const LoginWrapper = styled.View`
   flex: 2;
@@ -14,27 +15,32 @@ const LoginWrapper = styled.View`
 `;
 
 const LoginText = styled.Text`
-  font-size: 20px;
-  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
 `;
 
 const LoginInput = styled.TextInput`
-  margin-top: 20px;
+  background-color: white;
+  border: #9e9e9e 1px;
+  border-radius: 5px;
+  width: 80%;
   font-size: 20px;
-  border-bottom-color: #dfdfdf;
-  border-bottom-width: 1px;
-  margin-bottom: 5px;
-`;
-
-const LoginButton = styled.Button`
-  font-size: 40px;
+  margin-bottom: 10px;
+  padding: 5px;
 `;
 
 const QuestionWrapper = styled.View`
-  width: 100%;
+  flex: 0.5;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 80%;
+  background-color: #673ab7;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 3px #222;
 `;
 
-const Login = ({setComp}) => {
+const Login = () => {
   const [emailInput, setEmailInput] = useState(null);
   const [passwordInput, setPasswordInput] = useState(null);
   const navigation = useNavigation();
@@ -47,7 +53,7 @@ const Login = ({setComp}) => {
   } = useContext(UserContext);
 
   useEffect(() => {
-    setCircleText(['Nice to see you again!']);
+    setCircleText(['Please login to continue.']);
   }, [currentUserEmail, setCircleText]);
 
   const handleUpdate = (text, input) => {
@@ -101,9 +107,8 @@ const Login = ({setComp}) => {
           placeholder="Password"
         />
       </QuestionWrapper>
-      <View>
-        <LoginButton onPress={handleSubmit} title="Continue" />
-      </View>
+
+      <StyledButton onPress={handleSubmit} title="Continue" />
     </LoginWrapper>
   );
 };

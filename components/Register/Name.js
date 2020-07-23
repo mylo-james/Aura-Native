@@ -3,6 +3,7 @@ import {Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import Email from './Email';
+import StyledButton from '../StyledButton';
 
 const NameWrapper = styled.View`
   flex: 2;
@@ -12,22 +13,29 @@ const NameWrapper = styled.View`
 `;
 
 const NameText = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
+  color: #fff;
 `;
 
 const NameInput = styled.TextInput`
-  margin-top: 20px;
+  background-color: white;
+  border: #9e9e9e 1px;
+  border-radius: 5px;
+  width: 80%;
   font-size: 20px;
-  border-bottom-color: #dfdfdf;
-  border-bottom-width: 1px;
-`;
-
-const NameButton = styled.Button`
-  font-size: 40px;
+  margin-bottom: 10px;
+  padding: 5px;
 `;
 
 const QuestionWrapper = styled.View`
-  width: 100%;
+  flex: 0.5;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 80%;
+  background-color: #673ab7;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 3px #222;
 `;
 
 const Name = ({setComp}) => {
@@ -38,7 +46,7 @@ const Name = ({setComp}) => {
 
   useEffect(() => {
     setInput(currentUserName);
-    setCircleText(['Welcome to Aura,', 'Your Daily Mood Journal.']);
+    setCircleText(['Please register to continue.']);
   }, [currentUserName, setCircleText]);
 
   const handleUpdate = (text) => {
@@ -63,7 +71,7 @@ const Name = ({setComp}) => {
           placeholder="My friends call me...."
         />
       </QuestionWrapper>
-      <NameButton onPress={handleContinue} title="Continue" />
+      <StyledButton onPress={handleContinue} title="Continue" />
     </NameWrapper>
   );
 };
