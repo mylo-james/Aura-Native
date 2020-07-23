@@ -20,8 +20,13 @@ const RegisterWrapper = styled.View`
 `;
 
 const Header = styled.Text`
-  color: #673ab7;
+  color: #454f8a;
   font-size: 25px;
+`;
+
+const SmallText = styled.Text`
+  color: #454f8a;
+  font-size: 16px;
 `;
 
 const SwitchWrapper = styled.View`
@@ -45,7 +50,7 @@ const Register = (props) => {
 
       {register ? (
         <SwitchWrapper>
-          <Text>I already have an account</Text>
+          <SmallText>I already have an account</SmallText>
           <StyledButton
             onPress={() => {
               setRegister(false);
@@ -56,7 +61,7 @@ const Register = (props) => {
         </SwitchWrapper>
       ) : (
         <SwitchWrapper>
-          <Text>I don't have an account</Text>
+          <SmallText>I don't have an account</SmallText>
           <StyledButton
             onPress={() => {
               setRegister(true);

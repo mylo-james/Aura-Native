@@ -27,7 +27,9 @@ const Home = ({navigation}) => {
   } = useContext(UserContext);
   useEffect(() => {
     (async () => {
+      console.log(JSON.parse(await AsyncStorage.getItem('aura_token')));
       const token = JSON.parse(await AsyncStorage.getItem('aura_token'));
+
       if (!token) {
         navigation.navigate('Auth');
       } else {
@@ -54,7 +56,7 @@ const Home = ({navigation}) => {
         }
       }
     })();
-  }, [setCurrentUserEmail, setCurrentUserId, setCurrentUserName, navigation]);
+  }, []);
 
   return (
     <HomeWrapper>

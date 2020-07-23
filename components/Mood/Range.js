@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {Text, Button} from 'react-native';
 import styled from 'styled-components';
 import {CircleContext, UserContext, MoodContext} from '../../context';
@@ -19,16 +19,22 @@ const EmojiWrapper = styled.View`
   flex: 0.65;
   padding: 20px;
   justify-content: space-evenly;
-  border-radius: 10px;
+  border-radius: 300px;
   align-items: center;
-  background-color: #673ab7;
+  background-color: #454f8a;
   width: 70%;
-  box-shadow: 0 2px 3px #222;
 `;
 
 const EmojiText = styled.Text`
   color: white;
-  font-size: 25px;
+  font-size: 20px;
+`;
+
+const EmojiImage = styled.Image`
+  width: 60%;
+  height: 60%;
+  border-radius: 300px;
+  resize-mode: contain;
 `;
 
 const style = {
@@ -50,35 +56,51 @@ const Range = ({setComp}) => {
   const {setCircleText} = useContext(CircleContext);
   const {currentUserName} = useContext(UserContext);
   const {mood, setMood} = useContext(MoodContext);
-  const Emoji = [
-    <Icon name="emoticon-cry-outline" size={150} color="#fff" />,
-    <Icon name="emoticon-sad-outline" size={150} color="#fff" />,
-    <Icon name="emoticon-neutral-outline" size={150} color="#fff" />,
-    <Icon name="emoticon-happy-outline" size={150} color="#fff" />,
-    <Icon name="emoticon-excited-outline" size={150} color="#fff" />,
-  ];
+  const [Emoji, setEmoji] = useState();
 
-  const MoodText = ['Terrible', 'Not Good', 'Fine', 'Good', 'Great'];
+  const MoodText = [
+    "I'm feeling terrible.",
+    "I'm not happy.",
+    "I'm fine.",
+    "I'm good!",
+    "I'm great!",
+  ];
 
   useEffect(() => {
     setCircleText([`Nice to see you ${currentUserName}`, 'How are you today?']);
-  }, [currentUserName, setCircleText]);
+    switch (mood.mood) {
+      case 5:
+        setEmoji(<EmojiImage source={require('../../Images/Emoji/5.png')} />);
+        break;
+      case 3:
+        setEmoji(<EmojiImage source={require('../../Images/Emoji/3.png')} />);
+        break;
+      case 2:
+        setEmoji(<EmojiImage source={require('../../Images/Emoji/2.png')} />);
+        break;
+      case 1:
+        setEmoji(<EmojiImage source={require('../../Images/Emoji/1.png')} />);
+        break;
+      default:
+        setEmoji(<EmojiImage source={require('../../Images/Emoji/4.png')} />);
+    }
+  }, [currentUserName, mood.mood]);
+
   return (
     <RangeWrapper>
       <EmojiWrapper>
-        {Emoji[mood.mood - 1]}
+        {Emoji}
         <EmojiText>{MoodText[mood.mood - 1]}</EmojiText>
       </EmojiWrapper>
       <Slider
         style={style.range}
         minimumValue={1}
         maximumValue={5}
-        step={1}
         value={mood.mood}
         onValueChange={(value) => {
-          setMood({...mood, mood: value});
+          setMood({...mood, mood: Math.floor(value)});
         }}
-        minimumTrackTintColor="#673AB7"
+        minimumTrackTintColor="#454f8a"
         maximumTrackTintColor="#fff"
       />
       <StyledButton

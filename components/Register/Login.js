@@ -34,7 +34,7 @@ const QuestionWrapper = styled.View`
   justify-content: space-evenly;
   align-items: center;
   width: 80%;
-  background-color: #673ab7;
+  background-color: #454f8a;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 3px #222;

@@ -26,8 +26,8 @@ const Activity = ({setComp}) => {
   const {mood} = useContext(MoodContext);
 
   useEffect(() => {
-    const MoodText = ['so terrible', 'not good', 'fine', 'so good', 'so great'];
-    setCircleText([`What makes today ${MoodText[mood.mood - 1]}?`]);
+    const MoodText = ['so terrible', 'not good', 'fine', 'good', 'so great'];
+    setCircleText(['What makes you feel', `${MoodText[mood.mood - 1]} today?`]);
   }, [mood.mood, currentUserName, setCircleText]);
   return (
     <ActivityWrapper>

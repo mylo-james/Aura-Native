@@ -8,7 +8,7 @@ const Card = styled.View`
   justify-content: center;
   width: 70%;
   flex-flow: row wrap;
-  background-color: #673ab7;
+  background-color: #454f8a;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 3px #222;
@@ -25,7 +25,7 @@ const IconWrapper = styled.TouchableOpacity`
 const style = {
   selected: {
     backgroundColor: '#fff',
-    color: '#673ab7',
+    color: '#454f8a',
   },
   notSelected: {
     backgroundColor: 'transparent',
@@ -55,7 +55,7 @@ const ActivityCard = () => {
         <Icon
           name="briefcase-outline"
           size={50}
-          color={mood.act.includes(1) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(1) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(1) ? style.selected : style.notSelected}>
           Work
@@ -69,7 +69,7 @@ const ActivityCard = () => {
         <Icon
           name="school-outline"
           size={50}
-          color={mood.act.includes(2) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(2) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(2) ? style.selected : style.notSelected}>
           School
@@ -83,7 +83,7 @@ const ActivityCard = () => {
         <Icon
           name="gamepad-variant-outline"
           size={50}
-          color={mood.act.includes(3) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(3) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(3) ? style.selected : style.notSelected}>
           Hobbies
@@ -97,7 +97,7 @@ const ActivityCard = () => {
         <Icon
           name="home-outline"
           size={50}
-          color={mood.act.includes(4) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(4) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(4) ? style.selected : style.notSelected}>
           Family
@@ -111,7 +111,7 @@ const ActivityCard = () => {
         <Icon
           name="heart-outline"
           size={50}
-          color={mood.act.includes(5) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(5) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(5) ? style.selected : style.notSelected}>
           Love
@@ -125,7 +125,7 @@ const ActivityCard = () => {
         <Icon
           name="account-group-outline"
           size={50}
-          color={mood.act.includes(6) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(6) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(6) ? style.selected : style.notSelected}>
           Friends
@@ -139,7 +139,7 @@ const ActivityCard = () => {
         <Icon
           name="bed-outline"
           size={50}
-          color={mood.act.includes(7) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(7) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(7) ? style.selected : style.notSelected}>
           Sleep
@@ -153,7 +153,7 @@ const ActivityCard = () => {
         <Icon
           name="hospital-box-outline"
           size={50}
-          color={mood.act.includes(8) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(8) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(8) ? style.selected : style.notSelected}>
           Health
@@ -167,7 +167,7 @@ const ActivityCard = () => {
         <Icon
           name="run-fast"
           size={50}
-          color={mood.act.includes(9) ? '#673ab7' : '#fff'}
+          color={mood.act.includes(9) ? '#454f8a' : '#fff'}
         />
         <Text style={mood.act.includes(9) ? style.selected : style.notSelected}>
           Exercise

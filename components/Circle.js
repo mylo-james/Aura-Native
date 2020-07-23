@@ -5,21 +5,26 @@ import {CircleContext} from '../context';
 const CircleWrapper = styled.View`
   flex-flow: row;
   height: 20%;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
   top: 0;
-  margin: 20px auto;
+  padding: 20px 20px 0px 30px;
 `;
 
 const CircleImg = styled.Image`
+  flex: 1;
   width: 30%;
   height: 70%;
   border-radius: 200px;
   margin-bottom: 20px;
+  resize-mode: contain;
 `;
 
-const CircleTextWrapper = styled.View``;
+const CircleTextWrapper = styled.View`
+  flex: 2;
+  padding-left: 25px;
+`;
 
 const CircleText = styled.Text`
   font-size: 22px;
@@ -29,7 +34,7 @@ const Circle = (props) => {
   const {circleText} = useContext(CircleContext);
   return (
     <CircleWrapper>
-      <CircleImg source={require('../Images/circle.png')} />
+      <CircleImg source={require('../Images/Emoji/6.png')} />
       <CircleTextWrapper className="circleText">
         {circleText.map((line, i) => {
           return <CircleText key={`circleTheme-${i}`}>{line}</CircleText>;

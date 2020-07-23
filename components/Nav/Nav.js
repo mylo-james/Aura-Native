@@ -12,7 +12,7 @@ const NavWrapper = styled.View`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #673ab7;
+  background-color: #454f8a;
   z-index: 2;
   box-shadow: 0 2px 3px #222;
 `;

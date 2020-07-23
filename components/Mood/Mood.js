@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
 import styled from 'styled-components';
-import Circle from '../Circle';
 import Range from './Range';
 
 const MoodWrapper = styled.View`
