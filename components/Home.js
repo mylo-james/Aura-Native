@@ -27,7 +27,6 @@ const Home = ({navigation}) => {
   } = useContext(UserContext);
   useEffect(() => {
     (async () => {
-      console.log(JSON.parse(await AsyncStorage.getItem('aura_token')));
       const token = JSON.parse(await AsyncStorage.getItem('aura_token'));
 
       if (!token) {
@@ -67,7 +66,7 @@ const Home = ({navigation}) => {
           headerShown: false,
           cardStyle: {backgroundColor: 'transparent'},
         }}>
-        <Stack.Screen style={{height: '70%'}} name="Mood" component={Mood} />
+        <Stack.Screen name="Mood" component={Mood} />
         <Stack.Screen name="Feed" component={Feed} />
         <Stack.Screen name="Stats" component={Stats} />
         <Stack.Screen name="Resources" component={Resources} />

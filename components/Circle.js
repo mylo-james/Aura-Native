@@ -1,15 +1,15 @@
 import React, {useContext} from 'react';
 import styled from 'styled-components/native';
+import {SafeAreaView} from 'react-native';
 import {CircleContext} from '../context';
 
-const CircleWrapper = styled.View`
+const CircleWrapper = styled.SafeAreaView`
   flex-flow: row;
   height: 20%;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   top: 0;
-  padding: 20px 20px 0px 30px;
 `;
 
 const CircleImg = styled.Image`
@@ -18,6 +18,7 @@ const CircleImg = styled.Image`
   height: 70%;
   border-radius: 200px;
   margin-bottom: 20px;
+  margin-left: 30px;
   resize-mode: contain;
 `;
 

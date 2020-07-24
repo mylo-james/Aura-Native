@@ -26,12 +26,12 @@ const PasswordInput = styled.TextInput`
   border-radius: 5px;
   width: 80%;
   font-size: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   padding: 5px;
 `;
 
 const QuestionWrapper = styled.View`
-  flex: 0.5;
+  flex: 0.7;
   justify-content: space-evenly;
   align-items: center;
   width: 80%;
@@ -109,8 +109,9 @@ const Password = ({setComp}) => {
           onChangeText={(text) => handleUpdate(text, 'password')}
           placeholder="Password"
         />
-        <PasswordText>1 Upper, 1 Lower, 1 Digit,</PasswordText>
-        <PasswordText>1 Symbol, 8 Characters</PasswordText>
+        <PasswordText multiline={true}>
+          8 characters, 1 uppercase, 1 lowercase, 1 digit, 1 symbol.
+        </PasswordText>
         <PasswordInput
           onChangeText={(text) => handleUpdate(text, 'confrim')}
           placeholder="Confirm Password"
