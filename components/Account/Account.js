@@ -55,7 +55,14 @@ const Account = () => {
     }
   };
 
-  const renderItem = (mood) => <MoodItem mood={mood.item} />;
+  const renderItem = (mood) => (
+    <MoodItem
+      data={data}
+      length={data.length}
+      setData={setData}
+      mood={mood.item}
+    />
+  );
 
   return (
     <AccountWrapper>
