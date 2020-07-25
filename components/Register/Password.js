@@ -106,6 +106,7 @@ const Password = ({setComp}) => {
       <QuestionWrapper>
         <PasswordText>Let's make a password...</PasswordText>
         <PasswordInput
+          secureTextEntry={true}
           onChangeText={(text) => handleUpdate(text, 'password')}
           placeholder="Password"
         />
@@ -113,6 +114,7 @@ const Password = ({setComp}) => {
           8 characters, 1 uppercase, 1 lowercase, 1 digit, 1 symbol.
         </PasswordText>
         <PasswordInput
+          secureTextEntry={true}
           onChangeText={(text) => handleUpdate(text, 'confrim')}
           placeholder="Confirm Password"
         />

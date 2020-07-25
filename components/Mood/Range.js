@@ -3,7 +3,6 @@ import {Text, Button} from 'react-native';
 import styled from 'styled-components';
 import {CircleContext, UserContext, MoodContext} from '../../context';
 import Slider from '@react-native-community/slider';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import StyledButton from '../StyledButton';
 import Activity from './Activity';
 
@@ -67,7 +66,13 @@ const Range = ({setComp}) => {
   ];
 
   useEffect(() => {
-    setCircleText([`Nice to see you ${currentUserName}`, 'How are you today?']);
+    setCircleText([
+      `Nice to see you, ${currentUserName}`,
+      'How are you today?',
+    ]);
+  }, []);
+
+  useEffect(() => {
     switch (mood.mood) {
       case 5:
         setEmoji(<EmojiImage source={require('../../Images/Emoji/5.png')} />);
