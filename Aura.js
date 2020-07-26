@@ -10,10 +10,9 @@ import {UserContext, ThemeContext, CircleContext, MoodContext} from './context';
 const Stack = createStackNavigator();
 
 const Aura = (props) => {
- 
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUserName, setCurrentUserName] = useState(null);
-  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const [currentUserNumber, setCurrentUserNumber] = useState(null);
   const [currentTheme, setCurrentTheme] = useState(3);
   const [circleText, setCircleText] = useState([]);
   const [mood, setMood] = useState({
@@ -28,8 +27,8 @@ const Aura = (props) => {
     setCurrentUserId,
     currentUserName,
     setCurrentUserName,
-    currentUserEmail,
-    setCurrentUserEmail,
+    currentUserNumber,
+    setCurrentUserNumber,
   };
 
   const themeContextValue = {

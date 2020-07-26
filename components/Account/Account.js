@@ -34,7 +34,7 @@ const Account = () => {
   const {
     setCurrentUserId,
     setCurrentUserName,
-    setCurrentUserEmail,
+    setCurrentUserNumber,
     currentUserId,
   } = useContext(UserContext);
 
@@ -73,7 +73,7 @@ const Account = () => {
   );
 
   const handleLogout = async () => {
-    setCurrentUserEmail(null);
+    setCurrentUserNumber(null);
     setCurrentUserName(null);
     setCurrentUserId(null);
     await AsyncStorage.clear();

@@ -41,37 +41,37 @@ const QuestionWrapper = styled.View`
 `;
 
 const Login = () => {
-  const [emailInput, setEmailInput] = useState(null);
+  const [numberInput, setNumberInput] = useState(null);
   const [passwordInput, setPasswordInput] = useState(null);
   const navigation = useNavigation();
   const {setCircleText} = useContext(CircleContext);
   const {
     setCurrentUserId,
     setCurrentUserName,
-    setCurrentUserEmail,
-    currentUserEmail,
+    setCurrentUserNumber,
+    currentUserNumber,
   } = useContext(UserContext);
 
   useEffect(() => {
     setCircleText(['Please login to continue.']);
-  }, [currentUserEmail, setCircleText]);
+  }, [currentUserNumber, setCircleText]);
 
   const handleUpdate = (text, input) => {
-    if (input === 'email') {
-      setEmailInput(text.toLowerCase());
+    if (input === 'number') {
+      setNumberInput(text.toLowerCase());
     } else {
       setPasswordInput(text);
     }
   };
 
   const handleSubmit = async () => {
-    if (!emailInput) {
-      Alert.alert('Invalid Response', 'Please provide an Email.');
+    if (!numberInput) {
+      Alert.alert('Invalid Response', 'Please provide an Number.');
     } else if (!passwordInput) {
       Alert.alert('Invalid Response', 'Please confirm your Login.');
     } else {
       const body = {
-        email: emailInput,
+        phoneNumber: numberInput,
         password: passwordInput,
       };
       const res = await fetch(`${backendURL}/session/login`, {
@@ -87,7 +87,7 @@ const Login = () => {
       }
       const {access_token, user} = await res.json();
       await setCurrentUserId(user.id);
-      await setCurrentUserEmail(user.email);
+      await setCurrentUserNumber(user.number);
       await setCurrentUserName(user.name);
       await AsyncStorage.setItem('aura_token', JSON.stringify(access_token));
       setCircleText([`Nice to see you, ${user.name}`, 'How are you today?']);
@@ -100,8 +100,8 @@ const Login = () => {
       <QuestionWrapper>
         <LoginText>Please Log In</LoginText>
         <LoginInput
-          onChangeText={(text) => handleUpdate(text, 'email')}
-          placeholder="Email"
+          onChangeText={(text) => handleUpdate(text, 'number')}
+          placeholder="Phone Number"
         />
         <LoginInput
           secureTextEntry={true}

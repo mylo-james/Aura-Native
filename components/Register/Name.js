@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import {Alert} from 'react-native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
-import Email from './Email';
+import Number from './Number';
 import StyledButton from '../StyledButton';
 
 const NameWrapper = styled.View`
@@ -58,7 +58,7 @@ const Name = ({setComp}) => {
       Alert.alert('Invalid Response', 'Please provide a name.');
     } else {
       setCurrentUserName(input);
-      setComp(<Email setComp={setComp} />);
+      setComp(<Number setComp={setComp} />);
     }
   };
   return (

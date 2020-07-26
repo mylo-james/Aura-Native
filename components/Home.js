@@ -23,7 +23,7 @@ const Home = ({navigation}) => {
   const {
     setCurrentUserId,
     setCurrentUserName,
-    setCurrentUserEmail,
+    setCurrentUserNumber,
   } = useContext(UserContext);
   const {setCircleText} = useContext(CircleContext);
   useEffect(() => {
@@ -56,7 +56,7 @@ const Home = ({navigation}) => {
           const {user} = await res.json();
           setCurrentUserId(user.id);
           setCurrentUserName(user.name);
-          setCurrentUserEmail(user.email);
+          setCurrentUserNumber(user.phoneNumber);
         } catch (e) {
           navigation.reset({
             index: 0,

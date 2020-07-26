@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
-import Email from './Email';
+import Number from './Number';
 import StyledButton from '../StyledButton';
 
 const PasswordWrapper = styled.View`
@@ -49,14 +49,14 @@ const Password = ({setComp}) => {
   const {
     setCurrentUserId,
     setCurrentUserName,
-    setCurrentUserEmail,
+    setCurrentUserNumber,
     currentUserName,
-    currentUserEmail,
+    currentUserNumber,
   } = useContext(UserContext);
 
   useEffect(() => {
-    setCircleText(['Got it! You email is:', `${currentUserEmail}`]);
-  }, [currentUserEmail, setCircleText]);
+    setCircleText(['Got it! You number is:', `${currentUserNumber}`]);
+  }, [currentUserNumber, setCircleText]);
 
   const handleUpdate = (text, input) => {
     if (input === 'password') {
@@ -74,7 +74,7 @@ const Password = ({setComp}) => {
     } else {
       const body = {
         name: currentUserName,
-        email: currentUserEmail,
+        phoneNumber: currentUserNumber,
         password: passwordInput,
         confirmPassword: confirmInput,
       };
@@ -91,7 +91,7 @@ const Password = ({setComp}) => {
       }
       const {access_token, user} = await res.json();
       setCurrentUserId(user.id);
-      setCurrentUserEmail(user.email);
+      setCurrentUserNumber(user.phoneNumber);
       setCurrentUserName(user.name);
       await AsyncStorage.setItem('aura_token', JSON.stringify(access_token));
       setCircleText([
@@ -103,7 +103,7 @@ const Password = ({setComp}) => {
   };
 
   const handleBack = () => {
-    setComp(<Email setComp={setComp} />);
+    setComp(<Number setComp={setComp} />);
   };
   return (
     <PasswordWrapper>
