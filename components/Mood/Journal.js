@@ -70,6 +70,7 @@ const Journal = ({setComp}) => {
     } else {
       setComp(<Range setComp={setComp} />);
       setMood({mood: mood.mood, act: [], title: '', content: ''});
+      setCircleText(["Here are your past moments we've collected."]);
       navigation.navigate('Account');
     }
   };

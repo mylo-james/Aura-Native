@@ -94,6 +94,10 @@ const Password = ({setComp}) => {
       setCurrentUserEmail(user.email);
       setCurrentUserName(user.name);
       await AsyncStorage.setItem('aura_token', JSON.stringify(access_token));
+      setCircleText([
+        `Nice to see you, ${currentUserName}`,
+        'How are you today?',
+      ]);
       navigation.navigate('Home');
     }
   };

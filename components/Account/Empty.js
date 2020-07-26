@@ -33,6 +33,10 @@ const Empty = () => {
       <EmptyText>Let's record one!</EmptyText>
       <StyledButton
         onPress={() => {
+          setCircleText([
+            `Nice to see you, ${currentUserName}`,
+            'How are you today?',
+          ]);
           navigation.navigate('Mood');
         }}
         title={'How are you today?'}

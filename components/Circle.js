@@ -25,6 +25,7 @@ const CircleImg = styled.Image`
 const CircleTextWrapper = styled.View`
   flex: 2;
   padding-left: 25px;
+  padding-right: 10px;
 `;
 
 const CircleText = styled.Text`

@@ -86,10 +86,11 @@ const Login = () => {
         return;
       }
       const {access_token, user} = await res.json();
-      setCurrentUserId(user.id);
-      setCurrentUserEmail(user.email);
-      setCurrentUserName(user.name);
+      await setCurrentUserId(user.id);
+      await setCurrentUserEmail(user.email);
+      await setCurrentUserName(user.name);
       await AsyncStorage.setItem('aura_token', JSON.stringify(access_token));
+      setCircleText([`Nice to see you, ${user.name}`, 'How are you today?']);
       navigation.navigate('Home');
     }
   };
@@ -103,6 +104,7 @@ const Login = () => {
           placeholder="Email"
         />
         <LoginInput
+          secureTextEntry={true}
           onChangeText={(text) => handleUpdate(text, 'password')}
           placeholder="Password"
         />

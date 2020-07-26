@@ -152,11 +152,12 @@ const MoodItem = ({setData, data, length, mood}) => {
     if (!res.ok) {
       Alert.alert('Error', 'Server Error');
     } else {
-      Alert.alert('Deleted', 'Moment was deleted');
       const newData = data.filter((dataMood) => {
         return dataMood.id !== mood.id;
       });
-      setData(newData);
+      Alert.alert('Deleted', 'Moment was deleted');
+      setIsOpen(false);
+      setData(() => newData);
     }
   };
 

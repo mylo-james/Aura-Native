@@ -10,7 +10,7 @@ import {UserContext, ThemeContext, CircleContext, MoodContext} from './context';
 const Stack = createStackNavigator();
 
 const Aura = (props) => {
-  // AsyncStorage.clear();
+ 
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUserName, setCurrentUserName] = useState(null);
   const [currentUserEmail, setCurrentUserEmail] = useState(null);

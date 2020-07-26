@@ -1,14 +1,17 @@
 import React, {useContext, useState, useEffect} from 'react';
 import styled from 'styled-components';
+import AsyncStorage from '@react-native-community/async-storage';
+import {useNavigation} from '@react-navigation/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
 import MoodItem from './MoodItem';
+import StyledButton from '../StyledButton';
 import Empty from './Empty';
 
 const AccountWrapper = styled.View`
   position: absolute;
   background-color: #fff;
-  padding: 20px;
+  padding: 5px;
   padding-bottom: 89px;
   bottom: 0;
   border-radius: 10px;
@@ -23,14 +26,19 @@ const StyledFlatList = styled.FlatList`
 `;
 
 const Account = () => {
+  const navigation = useNavigation();
   const [data, setData] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
   const {setCircleText} = useContext(CircleContext);
-  const {currentUserId} = useContext(UserContext);
+  const {
+    setCurrentUserId,
+    setCurrentUserName,
+    setCurrentUserEmail,
+    currentUserId,
+  } = useContext(UserContext);
 
   useEffect(() => {
-    setCircleText(["Here are your past moments we've collected."]);
     (async () => {
       await getData(0);
       setLoaded(true);
@@ -64,8 +72,20 @@ const Account = () => {
     />
   );
 
+  const handleLogout = async () => {
+    setCurrentUserEmail(null);
+    setCurrentUserName(null);
+    setCurrentUserId(null);
+    await AsyncStorage.clear();
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Auth'}],
+    });
+  };
+
   return (
     <AccountWrapper>
+      <StyledButton onPress={handleLogout} title="Logout" />
       {loaded ? (
         <StyledFlatList
           contentContainerStyle={{

@@ -65,12 +65,6 @@ const Range = ({setComp}) => {
     "I'm great!",
   ];
 
-  useEffect(() => {
-    setCircleText([
-      `Nice to see you, ${currentUserName}`,
-      'How are you today?',
-    ]);
-  }, []);
 
   useEffect(() => {
     switch (mood.mood) {

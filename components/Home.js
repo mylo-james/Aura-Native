@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {backendURL} from '../config';
-import {UserContext} from '../context';
+import {UserContext, CircleContext} from '../context';
 import Nav from './Nav/Nav';
 import Feed from './Feed/Feed';
 import Stats from './Stats/Stats';
@@ -25,12 +25,16 @@ const Home = ({navigation}) => {
     setCurrentUserName,
     setCurrentUserEmail,
   } = useContext(UserContext);
+  const {setCircleText} = useContext(CircleContext);
   useEffect(() => {
     (async () => {
       const token = JSON.parse(await AsyncStorage.getItem('aura_token'));
 
       if (!token) {
-        navigation.navigate('Auth');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Auth'}],
+        });
       } else {
         try {
           const res = await fetch(`${backendURL}/session/check`, {
@@ -42,7 +46,10 @@ const Home = ({navigation}) => {
             body: JSON.stringify({access_token: token}),
           });
           if (!res.ok) {
-            navigation.naviage('Auth');
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Auth'}],
+            });
             return;
           }
 
@@ -51,7 +58,10 @@ const Home = ({navigation}) => {
           setCurrentUserName(user.name);
           setCurrentUserEmail(user.email);
         } catch (e) {
-          navigation.navigate('Auth');
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Auth'}],
+          });
         }
       }
     })();

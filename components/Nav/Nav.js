@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {CircleContext, UserContext} from '../../context';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -45,10 +46,13 @@ const Center = styled.View`
   box-shadow: 0 2px 3px #222;
 `;
 const Nav = () => {
+  const {setCircleText} = useContext(CircleContext);
+  const {currentUserName} = useContext(UserContext);
   const navigation = useNavigation();
   const feedIcon = (
     <Icon
       onPress={() => {
+        setCircleText(['Here how your friends are doing.']);
         navigation.navigate('Feed');
       }}
       name="view-list"
@@ -59,6 +63,7 @@ const Nav = () => {
   const resourcesIcon = (
     <Icon
       onPress={() => {
+        setCircleText(['Here are some resources that could help.']);
         navigation.navigate('Resources');
       }}
       name="newspaper"
@@ -69,6 +74,7 @@ const Nav = () => {
   const statsIcon = (
     <Icon
       onPress={() => {
+        setCircleText(["Here are some statistics we've collected."]);
         navigation.navigate('Stats');
       }}
       name="chart-areaspline-variant"
@@ -79,6 +85,7 @@ const Nav = () => {
   const accountIcon = (
     <Icon
       onPress={() => {
+        setCircleText(["Here are your past moments we've collected."]);
         navigation.navigate('Account');
       }}
       name="account-box"
@@ -89,6 +96,10 @@ const Nav = () => {
   const journalIcon = (
     <Icon
       onPress={() => {
+        setCircleText([
+          `Nice to see you, ${currentUserName}`,
+          'How are you today?',
+        ]);
         navigation.navigate('Mood');
       }}
       name="plus"
