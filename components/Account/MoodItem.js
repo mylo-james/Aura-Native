@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const MoodItemWrapper = styled.View`
   position: relative;
-  width: 100%;
+  width: 97%;
   height: 150px;
   flex-flow: row;
   justify-content: flex-end;
@@ -20,7 +20,7 @@ const MoodImage = styled.Image`
   flex: 1;
   padding: 10px;
   top: 35px;
-  left: 20px;
+  left: 35px;
   width: 75px;
   height: 75px;
   overflow: visible;

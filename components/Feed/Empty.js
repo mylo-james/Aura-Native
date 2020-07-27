@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components/native';
 import StyledButton from '../StyledButton';
 import {useNavigation} from '@react-navigation/native';
-import MoodItem from './MoodItem';
+import MoodItem from './Friend';
 
 const EmptyWrapper = styled.View`
+  height: 100%;
   margin-top: 125px;
   justify-content: center;
   align-items: center;
@@ -29,18 +30,8 @@ const Empty = () => {
   return (
     <EmptyWrapper>
       <MoonImage source={require('../../Images/Emoji/2.png')} />
-      <EmptyText>No moments...</EmptyText>
-      <EmptyText>Let's record one!</EmptyText>
-      <StyledButton
-        onPress={() => {
-          setCircleText([
-            `Nice to see you, ${currentUserName}`,
-            'How are you today?',
-          ]);
-          navigation.navigate('Mood');
-        }}
-        title={'How are you today?'}
-      />
+      <EmptyText>No friends yet...</EmptyText>
+      <EmptyText>Add one by phone number!</EmptyText>
     </EmptyWrapper>
   );
 };

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styled from 'styled-components/native';
 import StyledButton from '../StyledButton';
 import {useNavigation} from '@react-navigation/native';
+import {CircleContext, UserContext} from '../../context';
 import MoodItem from './MoodItem';
 
 const EmptyWrapper = styled.View`
@@ -25,6 +26,8 @@ const EmptyText = styled.Text`
 `;
 const Empty = () => {
   const navigation = useNavigation();
+  const {setCircleText} = useContext(CircleContext);
+  const {currentUserName} = useContext(UserContext);
 
   return (
     <EmptyWrapper>

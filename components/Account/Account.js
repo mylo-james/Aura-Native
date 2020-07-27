@@ -22,7 +22,7 @@ const AccountWrapper = styled.View`
 `;
 
 const StyledFlatList = styled.FlatList`
-  width: 111%;
+  width: 110%;
 `;
 
 const Account = () => {

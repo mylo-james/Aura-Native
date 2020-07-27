@@ -1,11 +1,12 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Alert, View} from 'react-native';
+import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
 import StyledButton from '../StyledButton';
+import formatNumber from '../formatNumber';
 
 const LoginWrapper = styled.View`
   flex: 2;
@@ -58,7 +59,7 @@ const Login = () => {
 
   const handleUpdate = (text, input) => {
     if (input === 'number') {
-      setNumberInput(text.toLowerCase());
+      setNumberInput(formatNumber(text));
     } else {
       setPasswordInput(text);
     }
@@ -100,6 +101,7 @@ const Login = () => {
       <QuestionWrapper>
         <LoginText>Please Log In</LoginText>
         <LoginInput
+          value={numberInput}
           onChangeText={(text) => handleUpdate(text, 'number')}
           placeholder="Phone Number"
         />

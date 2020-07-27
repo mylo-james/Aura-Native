@@ -5,6 +5,7 @@ import {CircleContext, UserContext} from '../../context';
 import Name from './Name';
 import Password from './Password';
 import StyledButton from '../StyledButton';
+import formatNumber from '../formatNumber';
 
 const NumberWrapper = styled.View`
   flex: 2;
@@ -55,7 +56,8 @@ const Number = ({setComp}) => {
   }, [currentUserName, setCircleText]);
 
   const handleUpdate = (text) => {
-    setCurrentUserNumber(text);
+    const format = formatNumber(text);
+    setCurrentUserNumber(format);
   };
 
   const handleContinue = () => {
@@ -78,7 +80,7 @@ const Number = ({setComp}) => {
           placeholder="My number is..."
           value={currentUserNumber}
         />
-        <NumberText>(555)555-555</NumberText>
+        <NumberText>ie: 555-555-5555</NumberText>
       </QuestionWrapper>
       <View
         style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>

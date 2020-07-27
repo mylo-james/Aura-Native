@@ -16,7 +16,7 @@ const Stats = () => {
   return (
     <StatsWrapper>
       <SafeAreaView>
-        <Text>Stats</Text>
+        <Text>Coming Soon!</Text>
       </SafeAreaView>
     </StatsWrapper>
   );

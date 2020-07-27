@@ -52,7 +52,7 @@ const Nav = () => {
   const feedIcon = (
     <Icon
       onPress={() => {
-        setCircleText(['Here how your friends are doing.']);
+        setCircleText(["Let's checkup on your friends."]);
         navigation.navigate('Feed');
       }}
       name="view-list"
