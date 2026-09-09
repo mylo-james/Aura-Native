@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Aura",
+    "slug": "aura",
+    "version": "0.1.0",
+    "scheme": "aura",
+    "userInterfaceStyle": "light",
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/aura/6.png"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

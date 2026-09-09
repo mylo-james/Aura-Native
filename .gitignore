@@ -65,3 +65,16 @@ __pycache__/
 *.pyc
 instance/
 .env
+
+# Modern demo runtime and private local state
+**/.venv-demo/
+**/instance-demo/
+client/.expo/
+client/dist/
+.toolchain/
+test-results/
+playwright-report/
+**/.pytest_cache/
+**/.ruff_cache/
+.recovery-node-modules/
+.initial-client-node-modules/

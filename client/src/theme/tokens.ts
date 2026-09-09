@@ -1,0 +1,58 @@
+import {StyleSheet} from 'react-native';
+export const color = {
+  indigo: '#454f8a',
+  ink: '#252b4b',
+  muted: '#606581',
+  canvas: '#f8f7f4',
+  white: '#ffffff',
+  wash: '#eeedf6',
+  line: '#d7d9e5',
+  danger: '#9a334a',
+  success: '#33634e',
+};
+export const s = StyleSheet.create({
+  page: {gap: 24, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 32},
+  stack: {gap: 16},
+  tight: {gap: 8},
+  row: {flexDirection: 'row', alignItems: 'center', gap: 12},
+  between: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  wrap: {flexDirection: 'row', flexWrap: 'wrap', gap: 8},
+  flex: {flex: 1, minWidth: 0},
+  center: {alignItems: 'center', gap: 16},
+  rule: {borderTopWidth: 1, borderTopColor: color.line, paddingTop: 24},
+  moonStage: {
+    backgroundColor: color.indigo,
+    width: 146,
+    height: 146,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  choiceRow: {flexDirection: 'row', justifyContent: 'space-between', gap: 4},
+  note: {backgroundColor: color.wash, padding: 16, borderRadius: 12, gap: 8},
+  entry: {
+    paddingVertical: 22,
+    borderBottomWidth: 1,
+    borderBottomColor: color.line,
+    gap: 12,
+  },
+  tag: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: color.wash,
+    borderRadius: 12,
+  },
+  barTrack: {
+    backgroundColor: color.line,
+    height: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+    flex: 1,
+  },
+  bar: {backgroundColor: color.indigo, height: 10, borderRadius: 5},
+});

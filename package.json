@@ -1,53 +1,40 @@
 {
-  "name": "Aura",
-  "version": "0.0.1",
+  "name": "aura",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint .",
-    "build:ios": "react-native bundle --minify --entry-file index.js --platform ios --dev false --bundle-output ./ios/main.jsbundle --assets-dest ./ios",
-    "web": "webpack serve --config web/webpack.config.cjs",
-    "build:web": "webpack --config web/webpack.config.cjs",
-    "api": "backend/.venv/bin/python backend/local.py"
+  "workspaces": [
+    "client"
+  ],
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "npm": ">=11.19.1 <12"
   },
-  "dependencies": {
-    "@react-native-community/async-storage": "^1.11.0",
-    "@react-native-community/masked-view": "^0.1.10",
-    "@react-native-community/slider": "^3.0.3",
-    "@react-navigation/material-bottom-tabs": "^5.2.14",
-    "@react-navigation/native": "^5.7.1",
-    "@react-navigation/stack": "^5.7.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-native": "0.64.1",
-    "react-native-gesture-handler": "^1.6.1",
-    "react-native-paper": "^4.0.1",
-    "react-native-reanimated": "^1.9.0",
-    "react-native-safe-area-context": "^3.1.1",
-    "react-native-screens": "^2.9.0",
-    "react-native-vector-icons": "^7.0.0",
-    "react-native-web": "0.17.7",
-    "styled-components": "^5.1.1"
+  "packageManager": "npm@11.19.1",
+  "scripts": {
+    "web": "npm run build:web && npm run serve:demo",
+    "typecheck": "npm run typecheck --workspace=@aura/client",
+    "lint": "eslint client/src tests scripts",
+    "test:unit": "tsx --test tests/unit/*.test.ts",
+    "test:api": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=backend backend/.venv-demo/bin/python -m pytest backend/tests -q -p no:cacheprovider",
+    "build:web": "npm run build:web --workspace=@aura/client",
+    "test:e2e": "playwright test",
+    "test:embed": "playwright test tests/e2e/embed.spec.ts",
+    "serve:demo": "backend/.venv-demo/bin/python backend/serve_demo.py",
+    "check": "npm run typecheck && npm run lint && npm run test:unit && npm run test:api && npm run build:web",
+    "postinstall": "patch-package",
+    "format": "prettier --write client/src tests scripts package.json playwright.config.ts"
   },
   "devDependencies": {
-    "@babel/core": "7.29.7",
-    "@babel/runtime": "7.10.5",
-    "@react-native-community/eslint-config": "1.1.0",
-    "ajv": "8.20.0",
-    "babel-jest": "25.5.1",
-    "babel-loader": "^9.0.0",
-    "eslint": "6.8.0",
-    "jest": "25.5.4",
-    "metro-react-native-babel-preset": "0.59.0",
-    "react-test-renderer": "17.0.2",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^6.0.0",
-    "webpack-dev-server": "^5.0.0"
+    "@axe-core/playwright": "4.11.1",
+    "@playwright/test": "1.58.2",
+    "@types/node": "24.12.0",
+    "eslint": "10.10.0",
+    "patch-package": "8.0.1",
+    "prettier": "3.9.6",
+    "tsx": "4.23.13",
+    "typescript-eslint": "8.70.0"
   },
-  "jest": {
-    "preset": "react-native"
+  "overrides": {
+    "decode-uri-component": "0.5.0"
   }
 }

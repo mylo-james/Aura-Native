@@ -1,70 +1,70 @@
 # Aura
 
-Aura is a daily mood tracker with activity selection, journal history, and a friends feed. This development checkout restores the fuller React Native app in a browser through React Native Web. The original native projects remain in `ios/` and `android/`.
+A small mood journal: notice how you feel, keep a moment, and explore what has been part of your days. Aura preserves its original indigo palette and six character illustrations, with brief mood animations and reduced-motion support.
 
-## Local development
+This repository contains the complete mobile-first web demo: an Expo/React Native client and a Flask/SQLite service. It opens at phone width on a desktop and works without an account. Each visitor gets an isolated, temporary 24-hour demo with 24 clearly fictional starting moments. Use made-up details.
 
-Verified with Node 26.8.1, npm 12.0.2, Python 3.11.16, and Chrome on macOS.
+## Run locally
+
+Requirements: Node **24.19.0**, npm **11.19.1**, and Python **3.13**. Use a Node version manager and select the version in `.node-version`. The npm lockfile is authoritative; install with the declared npm version without peer-dependency bypasses.
 
 ```sh
 npm ci
-python3.11 -m venv backend/.venv
-backend/.venv/bin/pip install -r backend/requirements.txt
-```
-
-In one terminal:
-
-```sh
-npm run api
-```
-
-In a second terminal:
-
-```sh
-npm run web
-```
-
-Open http://127.0.0.1:3110. The API runs on 127.0.0.1:5051; the browser forwards `/api` requests to it. Both servers must remain running. The local database is created automatically and existing data is retained across restarts.
-
-Create an account with a fictional name and phone number to try the demo. No SMS service is used for registration. Passwords require at least eight characters, including an uppercase letter, a lowercase letter, and a digit.
-
-The recovery machine also has a fictional account: phone `202-555-0101`, password `AuraLocal1!`. It is local data, not a seeded account in the repository.
-
-## Verification
-
-```sh
+python3.13 -m venv backend/.venv-demo
+backend/.venv-demo/bin/python -m pip install --require-hashes -r backend/requirements-dev.txt
 npm run build:web
-backend/.venv/bin/python -m unittest discover -s backend/tests -v
+
+export AURA_DEMO_STATE_DIR="$PWD/backend/instance-demo"
+export AURA_DEMO_STATIC_DIR="$PWD/client/dist"
+export AURA_EXTERNAL_ORIGIN='http://127.0.0.1:3111'
+export AURA_ALLOW_INSECURE_LOOPBACK=1
+backend/.venv-demo/bin/python backend/serve_demo.py --init-state
+npm run serve:demo
 ```
 
-The browser build checks compilation; the running demo uses the development server. Verified browser flows include registration, login, mood slider changes, activity selection, journal creation and editing, history after reload, navigation, logout, adding a fictional friend through Tailscale, and a 390px phone viewport.
+Open **http://127.0.0.1:3111**. Keep the server terminal open. Stop it with Ctrl-C. After client edits, run `npm run build:web` again and reload. Restart the server after Python edits. `npm run web` builds and starts this integrated local demo using the same environment variables.
 
-## Backend provenance and local configuration
+The explicit state directory contains the demo database and signing key. It must have mode `0700`; its key and database must have mode `0600`. Initialization creates those files and applies migrations. Normal startup requires initialized state and the built client. Recovery storage under `backend/instance` is rejected before initialization effects. The generic `DATABASE_URL` and `SECRET_KEY` variables are ignored by this app.
 
-`backend/` contains the application and migration source from [Aura-backend](https://github.com/mylo-james/Aura-backend), commit `31c175133f82909c7ff57446d10f313485db07f6`. It is included directly so frontend and API development use one repository. The obsolete seed script references another application's models and was not imported.
-
-Local startup uses `backend/instance/aura.sqlite3` and a generated signing key in `backend/instance/.secret-key`. Both are ignored by Git. The old hosted database credentials and signing key were replaced in the imported configuration. `DATABASE_URL` and `SECRET_KEY` can explicitly override the local defaults. Startup never runs the legacy reset/seed script.
-
-The frontend base is [Aura-Native](https://github.com/mylo-james/Aura-Native), commit `8ea79a65b735536a7b0d7e5ee5409ff5d109b91b`. Its last application feature work is later and more complete than the older [Aura website](https://github.com/mylo-james/Aura), whose feed, account, and statistics pages are empty. Later dependency-bot branches are not newer application versions.
-
-## Tailscale demo
-
-On the recovery machine, the private tailnet demo is https://mylos-mac-mini.tail0c4e0a.ts.net:8449/. It forwards to the web server and requires both local processes above. Other Tailscale routes are independent.
-
-To stop only the Aura route:
+## Verify
 
 ```sh
-tailscale serve --https=8449 off
+npm run typecheck
+npm run lint
+npm run test:unit
+npm run test:api
+node scripts/check-assets.mjs
+npm run build:web
+npm run test:e2e
 ```
 
-To restore that route:
+The default browser suite requires installed Google Chrome. Each browser case starts its own Waitress service and migrated temporary database; it does not use your local demo state. For WebKit coverage:
 
 ```sh
-tailscale serve --bg --https=8449 http://127.0.0.1:3110
+PLAYWRIGHT_BROWSERS_PATH="$PWD/.toolchain/playwright" npx playwright install webkit
+AURA_TEST_WEBKIT=1 PLAYWRIGHT_BROWSERS_PATH="$PWD/.toolchain/playwright" npm run test:e2e
 ```
 
-## Current limits
+If loopback port 3112 is occupied, set `AURA_EMBED_PORT` to a free port (for example, `AURA_EMBED_PORT=3162 npm run test:e2e`). The harness never stops another listener.
 
-This is a recovered development demo. Statistics remains the original Coming Soon screen; resource content and the native iOS/Android builds have not been revalidated. The original API trusts user IDs on mood/follow routes, so authentication and authorization need a separate review before use with real personal data or public hosting. Dependency modernization is also unfinished. Use fictional data in the local and tailnet demo.
+`npm run test:embed` checks same-site iframe use and the cross-site cookie fallback. `tests/e2e/performance.spec.ts` records five cold local Chrome loads under a fixed mobile network/CPU profile. Its budgets are 600 KiB initial JavaScript gzip, 900 KiB initial transfer, and median LCP at most 2.5 seconds. These are local lab measurements, not public field performance.
 
-The iOS simulator was unavailable on the recovery machine because only Xcode Command Line Tools were installed. Browser verification does not establish an iOS or Android build.
+## Project map
+
+| Path                      | Responsibility                                                            |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `client/src/app`          | Entry, Check-in, Moments, Patterns and About routes                       |
+| `client/src/features`     | Session generation, in-memory drafts, request state and editor safeguards |
+| `client/src/components`   | Shared controls, original characters and platform adapters                |
+| `backend/aura_demo`       | Strict API, temporary sessions, owned journal data and summaries          |
+| `backend/migrations-demo` | Dedicated SQLite schema migrations                                        |
+| `backend/tests`, `tests`  | Real database contracts, browser journeys and failure cases               |
+| `docs`                    | Architecture, operation, demo script and portfolio integration            |
+
+See [current screenshots](docs/screenshots/README.md). Start with [the demo script](docs/demo.md), [architecture and API](docs/architecture.md), [operation](docs/operations.md), and [portfolio integration](docs/portfolio-integration.md).
+
+## Recovery and scope
+
+The recovered application is preserved in local checkpoint `79a537c67216b017ecdb952ce6ce4c06d9f172ed`. It combines the prior Aura-Native client and recovered Python service. The current implementation consolidates their active source into this repository. The old database, signing key and Python environment are kept separately from the new demo state.
+
+The current delivery is a web application with native-compatible source and explicit platform adapters. Physical phone checks, native iOS/Android builds, account/sharing features, public hosting and the real portfolio integration are separate work. No user counts, clinical outcomes or native-release claims are made.
