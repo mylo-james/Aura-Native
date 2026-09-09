@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useDemo} from '../features/DemoProvider';
@@ -13,13 +13,21 @@ export function Entry() {
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<unknown>(null);
   const [cookieBlocked, setCookieBlocked] = useState(false);
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   async function start() {
     if (busy) return;
     setBusy(true);
     setFailure(null);
     try {
       await create();
-      router.replace('/check-in');
+      // A pending start must not undo navigation away from this entry screen.
+      if (mounted.current) router.replace('/check-in');
     } catch (e) {
       setFailure(e);
       if (

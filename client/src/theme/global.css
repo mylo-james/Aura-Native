@@ -7,10 +7,45 @@
   --wash: #eeedf6;
   --line: #d7d9e5;
   --danger: #9a334a;
+  --success: #33634e;
+  --backdrop: #eeedf2;
+  --field: #ffffff;
+  --field-border: #9098b5;
+  --on-primary: #ffffff;
+  --primary-hover: #343f78;
+  --surface-hover: #e0e2f0;
+  --danger-wash: #f7e9ec;
+  --selection: #d8dcef;
+  --selection-ink: #252b4b;
+  --scrollbar: #a7aecb;
+  --shadow: #252b4b12;
+  --character-stage: #454f8a;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--ink);
-  background: #eeedf2;
+  background: var(--backdrop);
   font-size: 16px;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --indigo: #b5bdf3;
+  --ink: #eeedf5;
+  --muted: #b2b4ca;
+  --canvas: #191b2b;
+  --wash: #26293e;
+  --line: #42465e;
+  --danger: #ffa7b8;
+  --success: #99d5b4;
+  --backdrop: #11131e;
+  --field: #202335;
+  --field-border: #777e9e;
+  --on-primary: #202440;
+  --primary-hover: #c9cffb;
+  --surface-hover: #333951;
+  --danger-wash: #3e2534;
+  --selection: #4b557f;
+  --selection-ink: #ffffff;
+  --scrollbar: #777e9e;
+  --shadow: #05060b55;
 }
 * {
   box-sizing: border-box;
@@ -48,8 +83,8 @@ a {
   text-underline-offset: 4px;
 }
 ::selection {
-  background: #d8dcef;
-  color: #252b4b;
+  background: var(--selection);
+  color: var(--selection-ink);
 }
 input,
 textarea {
@@ -67,7 +102,7 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 * {
-  scrollbar-color: #a7aecb transparent;
+  scrollbar-color: var(--scrollbar) transparent;
   scrollbar-width: thin;
 }
 .text {
@@ -91,7 +126,7 @@ a {
   color: var(--danger);
 }
 .text-success {
-  color: #33634e;
+  color: var(--success);
 }
 .bold {
   font-weight: 600;
@@ -133,11 +168,11 @@ a {
   font-size: 1rem;
   line-height: 1.5;
   background: var(--indigo);
-  color: white;
+  color: var(--on-primary);
   transition: background-color 0.15s ease-out;
 }
 .button-primary:hover:not(:disabled) {
-  background: #343f78;
+  background: var(--primary-hover);
 }
 .button-secondary {
   background: var(--wash);
@@ -150,11 +185,11 @@ a {
 }
 .button-danger {
   color: var(--danger);
-  background: #f7e9ec;
+  background: var(--danger-wash);
 }
 .button-secondary:hover:not(:disabled),
 .button-quiet:hover:not(:disabled) {
-  background: #e0e2f0;
+  background: var(--surface-hover);
 }
 .field-group {
   display: flex;
@@ -167,9 +202,9 @@ a {
   line-height: 1.5;
 }
 .field {
-  background: white;
+  background: var(--field);
   color: var(--ink);
-  border: 1px solid #9098b5;
+  border: 1px solid var(--field-border);
   border-radius: 12px;
   min-height: 48px;
   padding: 12px 14px;
@@ -250,7 +285,7 @@ textarea.field {
   gap: 8px;
 }
 .status-error {
-  background: #f7e9ec;
+  background: var(--danger-wash);
 }
 .sr-only {
   position: absolute;
@@ -268,7 +303,7 @@ textarea.field {
   background: var(--canvas);
   min-height: 100dvh;
   position: relative;
-  box-shadow: 0 12px 45px #252b4b12;
+  box-shadow: 0 12px 45px var(--shadow);
 }
 .app-header {
   padding: calc(16px + env(safe-area-inset-top)) 24px 0;
@@ -462,4 +497,72 @@ textarea.field {
   .aura-character {
     animation: none;
   }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.theme-toggle {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+.theme-toggle:hover {
+  background: var(--wash);
+}
+.field::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.appearance-settings {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.appearance-settings legend {
+  padding: 0;
+  margin-bottom: 12px;
+}
+.appearance-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.appearance-option {
+  position: relative;
+  flex: 1 1 80px;
+}
+.appearance-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.appearance-option span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+}
+.appearance-option input:checked + span {
+  background: var(--wash);
+  border-color: var(--indigo);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--indigo);
+}
+.appearance-option input:focus-visible + span {
+  outline: 3px solid var(--indigo);
+  outline-offset: 4px;
+}
+.appearance-option:hover span {
+  background: var(--wash);
+  cursor: pointer;
 }

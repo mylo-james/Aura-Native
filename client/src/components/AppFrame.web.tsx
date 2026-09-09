@@ -3,8 +3,16 @@ import {Link, usePathname} from 'expo-router';
 import {useDemo} from '../features/DemoProvider';
 import {focusHeading} from '../lib/platform';
 import {Icon} from './ui';
+import {ThemeProvider, ThemeToggle} from './Appearance.web';
 import '../theme/global.css';
 export function AppFrame({children}: {children: ReactNode}) {
+  return (
+    <ThemeProvider>
+      <Frame>{children}</Frame>
+    </ThemeProvider>
+  );
+}
+function Frame({children}: {children: ReactNode}) {
   const {demo, loading} = useDemo();
   const pathname = usePathname();
   useEffect(() => {
@@ -18,17 +26,18 @@ export function AppFrame({children}: {children: ReactNode}) {
           <Link
             href={active ? '/check-in' : '/'}
             className="wordmark"
-            aria-label="Aura home"
-          >
+            aria-label="Aura home">
             aura
           </Link>
-          <Link
-            href="/about"
-            className="icon-link"
-            aria-label="About Aura and support"
-          >
-            <Icon name="help" size={26} />
-          </Link>
+          <div className="header-actions">
+            <ThemeToggle />
+            <Link
+              href="/about"
+              className="icon-link"
+              aria-label="About Aura and support">
+              <Icon name="help" size={26} />
+            </Link>
+          </div>
         </div>
         <div className="demo-caption">
           <p className="text text-small text-muted">
@@ -56,8 +65,9 @@ export function AppFrame({children}: {children: ReactNode}) {
               key={item.href}
               href={item.href}
               className="nav-link"
-              aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
-            >
+              aria-current={
+                pathname.startsWith(item.href) ? 'page' : undefined
+              }>
               <Icon name={item.icon} />
               <span>{item.label}</span>
             </Link>

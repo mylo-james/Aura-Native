@@ -6,6 +6,7 @@ import {dateLabel} from '../lib/contracts';
 import {messageFor} from '../lib/http';
 import {Anchor, Button, Status, Text, Title} from '../components/ui';
 import {s} from '../theme/tokens';
+import {AppearanceSettings} from '../components/Appearance';
 export default function About() {
   const {demo, reset} = useDemo();
   const [confirm, setConfirm] = useState(false);
@@ -34,6 +35,7 @@ export default function About() {
           A place to check in, keep a moment, and notice what shows up.
         </Text>
       </View>
+      <AppearanceSettings />
       <View style={s.stack}>
         <Title level={2}>Your temporary demo</Title>
         <Text>
@@ -73,15 +75,13 @@ export default function About() {
               <Button
                 variant="danger"
                 busy={busy}
-                onPress={() => void resetDemo()}
-              >
+                onPress={() => void resetDemo()}>
                 {busy ? 'Resetting your demo…' : 'Reset this demo'}
               </Button>
               <Button
                 variant="secondary"
                 disabled={busy}
-                onPress={() => setConfirm(false)}
-              >
+                onPress={() => setConfirm(false)}>
                 Keep my demo
               </Button>
             </Status>
@@ -127,8 +127,7 @@ export default function About() {
         </Text>
         <Button
           variant="secondary"
-          onPress={() => router.replace(demo?.active ? '/check-in' : '/')}
-        >
+          onPress={() => router.replace(demo?.active ? '/check-in' : '/')}>
           Back to Aura
         </Button>
       </View>

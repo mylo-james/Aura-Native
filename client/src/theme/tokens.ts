@@ -1,5 +1,5 @@
-import {StyleSheet} from 'react-native';
-export const color = {
+import {Platform, StyleSheet} from 'react-native';
+const lightColor = {
   indigo: '#454f8a',
   ink: '#252b4b',
   muted: '#606581',
@@ -9,7 +9,25 @@ export const color = {
   line: '#d7d9e5',
   danger: '#9a334a',
   success: '#33634e',
+  characterStage: '#454f8a',
 };
+// CSS variables let shared React Native Web surfaces follow the same palette
+// as semantic web controls without rebuilding static styles on every toggle.
+export const color =
+  Platform.OS === 'web'
+    ? {
+        indigo: 'var(--indigo)',
+        ink: 'var(--ink)',
+        muted: 'var(--muted)',
+        canvas: 'var(--canvas)',
+        white: 'var(--field)',
+        wash: 'var(--wash)',
+        line: 'var(--line)',
+        danger: 'var(--danger)',
+        success: 'var(--success)',
+        characterStage: 'var(--character-stage)',
+      }
+    : lightColor;
 export const s = StyleSheet.create({
   page: {gap: 24, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 32},
   stack: {gap: 16},
@@ -26,7 +44,7 @@ export const s = StyleSheet.create({
   center: {alignItems: 'center', gap: 16},
   rule: {borderTopWidth: 1, borderTopColor: color.line, paddingTop: 24},
   moonStage: {
-    backgroundColor: color.indigo,
+    backgroundColor: color.characterStage,
     width: 146,
     height: 146,
     borderRadius: 16,

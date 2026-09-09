@@ -267,3 +267,41 @@ test('title and reflection limits remain usable at 320px through reload and edit
     page.getByRole('heading', {name: title, exact: true}),
   ).toBeVisible();
 });
+
+test('starting a demo does not override a newer navigation while its response is pending', async ({
+  page,
+}) => {
+  let release!: () => void;
+  let requested!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const pending = new Promise<void>((resolve) => {
+    requested = resolve;
+  });
+  await page.route('**/api/demo', async (route) => {
+    if (route.request().method() !== 'POST') return route.continue();
+    const response = await route.fetch();
+    requested();
+    await gate;
+    await route.fulfill({response});
+  });
+  await page.goto('/');
+  await page.getByRole('button', {name: 'Try Aura', exact: true}).click();
+  await pending;
+  try {
+    await page.getByRole('link', {name: 'About Aura and support'}).click();
+    await expect(
+      page.getByRole('heading', {name: 'A little about Aura.'}),
+    ).toBeVisible();
+  } finally {
+    release();
+  }
+  await expect(
+    page.getByRole('navigation', {name: 'Main navigation'}),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', {name: 'A little about Aura.'}),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/about$/);
+});
