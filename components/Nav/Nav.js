@@ -55,6 +55,8 @@ const Nav = () => {
         setCircleText(["Let's checkup on your friends."]);
         navigation.navigate('Feed');
       }}
+      accessibilityRole="button"
+      accessibilityLabel="Friends"
       name="view-list"
       size={30}
       color="#fff"
@@ -66,6 +68,8 @@ const Nav = () => {
         setCircleText(['Here are some resources that could help.']);
         navigation.navigate('Resources');
       }}
+      accessibilityRole="button"
+      accessibilityLabel="Resources"
       name="newspaper"
       size={30}
       color="#fff"
@@ -77,6 +81,8 @@ const Nav = () => {
         setCircleText(["Here are some statistics we've collected."]);
         navigation.navigate('Stats');
       }}
+      accessibilityRole="button"
+      accessibilityLabel="Statistics"
       name="chart-areaspline-variant"
       size={30}
       color="#fff"
@@ -88,6 +94,8 @@ const Nav = () => {
         setCircleText(["Here are your past moments we've collected."]);
         navigation.navigate('Account');
       }}
+      accessibilityRole="button"
+      accessibilityLabel="Account"
       name="account-box"
       size={30}
       color="#fff"
@@ -102,6 +110,8 @@ const Nav = () => {
         ]);
         navigation.navigate('Mood');
       }}
+      accessibilityRole="button"
+      accessibilityLabel="New mood"
       name="plus"
       size={30}
       color="#fff"

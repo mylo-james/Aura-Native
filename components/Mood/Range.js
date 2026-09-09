@@ -39,7 +39,9 @@ const EmojiImage = styled.Image`
 const style = {
   range: {
     width: '60%',
-    height: '20%',
+    height: 40,
+    flexGrow: 0,
+    flexShrink: 0,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -92,6 +94,8 @@ const Range = ({setComp}) => {
         <EmojiText>{MoodText[mood.mood - 1]}</EmojiText>
       </EmojiWrapper>
       <Slider
+        accessibilityLabel="Mood level"
+        step={1}
         style={style.range}
         minimumValue={1}
         maximumValue={5}

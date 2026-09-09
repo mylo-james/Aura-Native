@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import styled from 'styled-components';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -18,54 +18,47 @@ const HomeWrapper = styled.View`
   width: 100%;
 `;
 
+const Stack = createStackNavigator();
+
 const Home = ({navigation}) => {
-  const Stack = createStackNavigator();
   const {
+    currentUserId,
     setCurrentUserId,
     setCurrentUserName,
     setCurrentUserNumber,
   } = useContext(UserContext);
   const {setCircleText} = useContext(CircleContext);
+  const [ready, setReady] = useState(Boolean(currentUserId));
   useEffect(() => {
+    let active = true;
+    const showAuth = () => {
+      if (active) navigation.reset({index: 0, routes: [{name: 'Auth'}]});
+    };
     (async () => {
-      const token = JSON.parse(await AsyncStorage.getItem('aura_token'));
-
-      if (!token) {
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'Auth'}],
+      try {
+        const token = JSON.parse(await AsyncStorage.getItem('aura_token'));
+        if (!token) return showAuth();
+        const res = await fetch(`${backendURL}/session/check`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({access_token: token}),
         });
-      } else {
-        try {
-          const res = await fetch(`${backendURL}/session/check`, {
-            method: 'POST',
-            Authorization: token,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({access_token: token}),
-          });
-          if (!res.ok) {
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'Auth'}],
-            });
-            return;
-          }
-
-          const {user} = await res.json();
-          setCurrentUserId(user.id);
-          setCurrentUserName(user.name);
-          setCurrentUserNumber(user.phoneNumber);
-        } catch (e) {
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'Auth'}],
-          });
-        }
+        if (!res.ok) return showAuth();
+        const {user} = await res.json();
+        if (!active) return;
+        setCurrentUserId(user.id);
+        setCurrentUserName(user.name);
+        setCurrentUserNumber(user.phoneNumber);
+        setCircleText([`Nice to see you, ${user.name}`, 'How are you today?']);
+        setReady(true);
+      } catch (error) {
+        showAuth();
       }
     })();
+    return () => { active = false; };
   }, []);
+
+  if (!ready) return null;
 
   return (
     <HomeWrapper>

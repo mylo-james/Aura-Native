@@ -22,7 +22,7 @@ const FeedWrapper = styled.View`
 `;
 
 const StyledFlatList = styled.FlatList`
-  width: 111%;
+  width: 100%;
 `;
 
 const SearchView = styled.View`
@@ -66,7 +66,7 @@ const Feed = () => {
   const [data, setData] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
-  const [numberInput, setNumberInput] = useState(null);
+  const [numberInput, setNumberInput] = useState('');
   const {currentUserId} = useContext(UserContext);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const Feed = () => {
 
   const getData = async () => {
     setRefreshing(true);
-    const res = await fetch(`${backendURL}/follow/user/${currentUserId}`);
+    const res = await fetch(`${backendURL}/follow/user/${currentUserId}/`);
     if (!res.ok) {
       const error = await res.json();
       setRefreshing(false);

@@ -42,8 +42,8 @@ const QuestionWrapper = styled.View`
 `;
 
 const Login = () => {
-  const [numberInput, setNumberInput] = useState(null);
-  const [passwordInput, setPasswordInput] = useState(null);
+  const [numberInput, setNumberInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const navigation = useNavigation();
   const {setCircleText} = useContext(CircleContext);
   const {
@@ -88,7 +88,7 @@ const Login = () => {
       }
       const {access_token, user} = await res.json();
       await setCurrentUserId(user.id);
-      await setCurrentUserNumber(user.number);
+      await setCurrentUserNumber(user.phoneNumber);
       await setCurrentUserName(user.name);
       await AsyncStorage.setItem('aura_token', JSON.stringify(access_token));
       setCircleText([`Nice to see you, ${user.name}`, 'How are you today?']);

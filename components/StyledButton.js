@@ -21,7 +21,7 @@ const StyledText = styled.Text`
 
 const Button = ({onPress, title}) => {
   return (
-    <StyledButton onPress={onPress}>
+    <StyledButton onPress={onPress} accessibilityRole="button" accessibilityLabel={title}>
       <StyledText>{title}</StyledText>
     </StyledButton>
   );

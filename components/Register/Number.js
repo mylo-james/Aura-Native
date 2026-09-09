@@ -78,7 +78,7 @@ const Number = ({setComp}) => {
         <NumberInput
           onChangeText={(text) => handleUpdate(text)}
           placeholder="My number is..."
-          value={currentUserNumber}
+          value={currentUserNumber || ''}
         />
         <NumberText>ie: 555-555-5555</NumberText>
       </QuestionWrapper>

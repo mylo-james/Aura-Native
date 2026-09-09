@@ -50,7 +50,7 @@ const Aura = (props) => {
       <ThemeContext.Provider value={themeContextValue}>
         <CircleContext.Provider value={circleContextValue}>
           <MoodContext.Provider value={moodContextValue}>
-            <NavigationContainer style={{backgroundColor: 'transparent'}}>
+            <NavigationContainer documentTitle={{formatter: (options, route) => `Aura | ${route?.name || 'Daily Mood Tracker'}`}} style={{backgroundColor: 'transparent'}}>
               <Stack.Navigator
                 screenOptions={{
                   headerShown: false,

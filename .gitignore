@@ -57,3 +57,11 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# Local recovery runtime
+dist/
+.venv/
+__pycache__/
+*.pyc
+instance/
+.env

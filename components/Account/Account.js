@@ -1,7 +1,7 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useCallback, useRef} from 'react';
 import styled from 'styled-components';
 import AsyncStorage from '@react-native-community/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {CircleContext, UserContext} from '../../context';
 import {backendURL} from '../../config';
 import MoodItem from './MoodItem';
@@ -22,7 +22,7 @@ const AccountWrapper = styled.View`
 `;
 
 const StyledFlatList = styled.FlatList`
-  width: 110%;
+  width: 100%;
 `;
 
 const Account = () => {
@@ -38,30 +38,34 @@ const Account = () => {
     currentUserId,
   } = useContext(UserContext);
 
-  useEffect(() => {
-    (async () => {
-      await getData(0);
-      setLoaded(true);
-    })();
-  }, []);
+  const pageOffset = useRef(0);
+  const loading = useRef(false);
+  const hasMore = useRef(true);
 
-  const getData = async () => {
-    const page = data.length;
+  const getData = useCallback(async (reset = false) => {
+    if (!currentUserId || loading.current || (!reset && !hasMore.current)) return;
+    loading.current = true;
     setRefreshing(true);
-    const res = await fetch(
-      `${backendURL}/mood/user/${currentUserId}/page/${page}`,
-    );
-    if (!res.ok) {
-      const error = await res.json();
-      setRefreshing(false);
-      console.error(error);
-      return;
-    } else {
+    const offset = reset ? 0 : pageOffset.current;
+    try {
+      const res = await fetch(`${backendURL}/mood/user/${currentUserId}/page/${offset}`);
+      if (!res.ok) throw new Error('Could not load your journal.');
       const {moods} = await res.json();
+      pageOffset.current = offset + moods.length;
+      hasMore.current = moods.length === 3;
+      setData(previous => reset ? moods : [...previous, ...moods]);
+      setLoaded(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.current = false;
       setRefreshing(false);
-      setData([...data, ...moods]);
     }
-  };
+  }, [currentUserId]);
+
+  useFocusEffect(useCallback(() => {
+    getData(true);
+  }, [getData]));
 
   const renderItem = (mood) => (
     <MoodItem
@@ -95,7 +99,8 @@ const Account = () => {
           renderItem={renderItem}
           keyExtractor={(item, index) => `moodid-${index}`}
           ListEmptyComponent={<Empty />}
-          onEndReached={getData}
+          onEndReached={() => getData()}
+          onRefresh={() => getData(true)}
           refreshing={refreshing}
         />
       ) : null}
