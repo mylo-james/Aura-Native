@@ -131,8 +131,8 @@ def write_moment(identity=None):
     return jsonify(result), 200 if identity else 201
 
 
-def register_api(app, limiter):
-    principal_key = lambda: session.get("principal") or f"peer:{request.remote_addr}"
+def register_api(app, limiter, peer_address):
+    principal_key = lambda: session.get("principal") or f"peer:{peer_address()}"
     entry_peer = limiter.shared_limit("5 per minute", scope="demo_entry_peer")
     entry_global = limiter.shared_limit(
         "30 per minute", scope="demo_entry_global", key_func=lambda: "global"

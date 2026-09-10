@@ -4,11 +4,11 @@ from contextlib import contextmanager
 import sqlite3
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import CheckConstraint, ForeignKey, Index, event
+from sqlalchemy import CheckConstraint, ForeignKey, Index, event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Mapped, Session, mapped_column, relationship
 
-SCHEMA_REVISION = "0001_demo"
+SCHEMA_REVISION = "0002_rate_limits"
 db = SQLAlchemy()
 
 
@@ -80,11 +80,24 @@ class IdempotencyOperation(db.Model):
     response_json: Mapped[str] = mapped_column(nullable=False)
 
 
+# The demo deliberately serializes its small mutation workload. SQLite needs a writer
+# reservation; PostgreSQL uses a transaction-scoped advisory lock so separate functions
+# preserve the same capacity, idempotency, ownership, and version guarantees.
+_POSTGRES_DEMO_WRITE_LOCK = 41_028_501
+
+
 @contextmanager
 def atomic():
-    """Reserve the single SQLite writer before capacity, ownership or version reads."""
+    """Serialize a demo mutation before capacity, ownership, or version reads."""
     with Session(db.engine, expire_on_commit=False) as transaction:
-        transaction.connection().exec_driver_sql("BEGIN IMMEDIATE")
+        connection = transaction.connection()
+        if connection.dialect.name == "sqlite":
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+        elif connection.dialect.name == "postgresql":
+            transaction.execute(
+                text("SELECT pg_advisory_xact_lock(:lock_id)"),
+                {"lock_id": _POSTGRES_DEMO_WRITE_LOCK},
+            )
         try:
             yield transaction
             transaction.commit()

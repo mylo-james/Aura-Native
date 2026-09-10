@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from datetime import timedelta
+import hmac
+import ipaddress
 import logging
 import math
 import os
@@ -14,6 +16,7 @@ from urllib.parse import urlsplit
 from uuid import uuid4
 
 import click
+import certifi
 from alembic.migration import MigrationContext
 from flask import Flask, abort, g, request, send_from_directory
 from flask_compress import Compress
@@ -23,7 +26,9 @@ from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate, upgrade
 from flask_wtf.csrf import CSRFError, CSRFProtect
 from pydantic import ValidationError
+from sqlalchemy import event
 from sqlalchemy.exc import IntegrityError, OperationalError
+from sqlalchemy.pool import NullPool
 from werkzeug.exceptions import HTTPException
 
 from .config import ConfigurationError, load_config, require_state
@@ -65,7 +70,7 @@ def assert_revision():
 def create_app(overrides=None, *, initialize=False):
     values = overrides or {}
     config = load_config(values)
-    if initialize:
+    if initialize and not config.database_url:
         prepare_state(config)
     key = require_state(config)
     if (
@@ -80,8 +85,21 @@ def create_app(overrides=None, *, initialize=False):
         TESTING=config.testing,
         DEMO_CONFIG=config,
         SECRET_KEY=key,
-        SQLALCHEMY_DATABASE_URI=f"sqlite:///{config.database_path}",
-        SQLALCHEMY_ENGINE_OPTIONS={"connect_args": {"timeout": 5}},
+        SQLALCHEMY_DATABASE_URI=config.database_url or f"sqlite:///{config.database_path}",
+        SQLALCHEMY_ENGINE_OPTIONS=(
+            {
+                "poolclass": NullPool,
+                "hide_parameters": True,
+                "connect_args": {
+                    "connect_timeout": 5,
+                    **({} if config.testing else {
+                        "sslmode": "verify-full", "sslrootcert": certifi.where()
+                    }),
+                },
+            }
+            if config.database_url
+            else {"connect_args": {"timeout": 5}}
+        ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         MAX_CONTENT_LENGTH=16 * 1024,
         SESSION_COOKIE_NAME="__Host-aura-demo" if secure else "aura-demo-loopback",
@@ -103,15 +121,43 @@ def create_app(overrides=None, *, initialize=False):
     db.init_app(app)
     Migrate(app, db, directory=str(MIGRATIONS))
     with app.app_context():
+        if config.database_url:
+            # Neon transaction pooling rejects timeout settings in startup options.
+            # SET LOCAL bounds every transaction without leaking state to its next user.
+            def transaction_timeouts(connection):
+                connection.exec_driver_sql("SET LOCAL statement_timeout = '10s'")
+                connection.exec_driver_sql("SET LOCAL lock_timeout = '5s'")
+
+            event.listen(db.engine, "begin", transaction_timeouts)
         if initialize:
             upgrade(directory=str(MIGRATIONS))
-        assert_revision()
-        with atomic() as transaction:
-            cleanup(transaction)
+        # Hosted imports do not connect, migrate, or delete. Release initialization
+        # and explicit health/maintenance operations own those effects.
+        if initialize or not config.database_url:
+            assert_revision()
+            with atomic() as transaction:
+                cleanup(transaction)
+        storage_options = {}
+        if config.database_url:
+            # Import registers this backend with the native limits storage factory.
+            from .postgres_limits import PostgresFixedWindowStorage
+            storage_options = {"engine": db.engine, "key_salt": key}
+
+    def peer_address():
+        if config.database_url and os.environ.get("VERCEL") == "1":
+            forwarded = request.headers.get("x-vercel-forwarded-for", "").split(",")[0].strip()
+            try:
+                return str(ipaddress.ip_address(forwarded))
+            except ValueError:
+                return "unidentified-vercel-peer"
+        return get_remote_address()
+
     limiter = Limiter(
-        get_remote_address,
+        peer_address,
         app=app,
-        storage_uri="memory://",
+        storage_uri="aura-postgres://" if config.database_url else "memory://",
+        storage_options=storage_options,
+        strategy="fixed-window",
         headers_enabled=True,
         default_limits=[],
     )
@@ -120,7 +166,7 @@ def create_app(overrides=None, *, initialize=False):
     @app.before_request
     def request_boundary():
         g.request_id = str(uuid4())
-        # Do not trust forwarded Host, address or protocol. The original Host is checked exactly.
+        # Host stays exact; only the limiter uses Vercel's validated peer header.
         if request.host != urlsplit(config.external_origin).netloc:
             raise ApiError(400, "invalid_host", "This host is not configured for Aura.")
         if request.path.startswith("/api/") and request.url_rule is None:
@@ -231,13 +277,32 @@ def create_app(overrides=None, *, initialize=False):
 
     from .routes import register_api
 
-    register_api(app, limiter)
+    register_api(app, limiter, peer_address)
 
     @app.cli.command("demo-cleanup")
     def cleanup_command():
         with atomic() as transaction:
             removed = cleanup(transaction)
+        if config.database_url:
+            limiter.storage.prune_expired()
         click.echo(f"Removed {removed} expired demo sessions.")
+
+    @app.get("/api/maintenance/cleanup")
+    def scheduled_cleanup():
+        expected = os.environ.get("CRON_SECRET", "")
+        supplied = request.headers.get("Authorization", "")
+        if (
+            not config.database_url
+            or len(expected) < 32
+            or not hmac.compare_digest(
+                supplied.encode("utf-8"), ("Bearer " + expected).encode("utf-8")
+            )
+        ):
+            abort(404)
+        with atomic() as transaction:
+            removed = cleanup(transaction)
+        limiter.storage.prune_expired()
+        return {"status": "ok", "expiredSessionsRemoved": removed}
 
     @app.get("/")
     @app.get("/<path:path>")

@@ -389,7 +389,11 @@ def test_session_moment_capacity_is_enforced_without_eviction(tmp_path):
 
 
 def test_active_session_capacity_rejects_new_demo_without_eviction(tmp_path):
-    app = make_app(tmp_path, RATELIMIT_ENABLED=False)
+    app = make_app(
+        tmp_path,
+        now=lambda: datetime(2026, 9, 9, tzinfo=UTC),
+        RATELIMIT_ENABLED=False,
+    )
     instant = "2026-09-09T00:00:00.000000Z"
     expires = "2026-09-10T00:00:00.000000Z"
     with app.app_context(), Session(db.engine) as transaction:

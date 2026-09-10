@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "flask",
+  "buildCommand": "npm run build:web",
+  "regions": ["cle1"],
+  "crons": [
+    {
+      "path": "/api/maintenance/cleanup",
+      "schedule": "23 8 * * *"
+    }
+  ]
+}

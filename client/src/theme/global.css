@@ -432,6 +432,13 @@ textarea.field {
     padding-left: 4px;
     padding-right: 4px;
   }
+  .choice-compact {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  .choice-compact .text {
+    white-space: nowrap;
+  }
   .heading-1 {
     font-size: 1.75rem;
   }
