@@ -3,6 +3,30 @@ import {useUnloadWarning} from '../lib/platform';
 
 const discardMessage = 'Discard the changes to this moment?';
 
+// TypeScript's DOM library does not yet expose the browser Navigation API.
+// Keep the narrow shape local so unsupported browsers retain the click and unload guards.
+type BrowserNavigateEvent = Event & {
+  navigationType: string;
+};
+
+type BrowserNavigation = {
+  addEventListener(
+    type: 'navigate',
+    listener: (event: BrowserNavigateEvent) => void,
+  ): void;
+  removeEventListener(
+    type: 'navigate',
+    listener: (event: BrowserNavigateEvent) => void,
+  ): void;
+};
+
+function browserNavigation(): BrowserNavigation | undefined {
+  const navigation = (window as Window & {navigation?: BrowserNavigation}).navigation;
+  return navigation && typeof navigation.addEventListener === 'function'
+    ? navigation
+    : undefined;
+}
+
 export function useEditorGuard(dirty: boolean) {
   const bypass = useRef(false);
   useUnloadWarning(dirty);
@@ -10,7 +34,7 @@ export function useEditorGuard(dirty: boolean) {
     if (!dirty) return;
     // Expo's Slot can unmount a screen while restoring root history. Ask at
     // the browser's pre-commit boundary, before Expo receives popstate.
-    const traversal = (event: NavigateEvent) => {
+    const traversal = (event: BrowserNavigateEvent) => {
       if (
         bypass.current ||
         event.navigationType !== 'traverse' ||
@@ -46,10 +70,11 @@ export function useEditorGuard(dirty: boolean) {
         event.stopPropagation();
       }
     };
-    window.navigation?.addEventListener('navigate', traversal);
+    const navigation = browserNavigation();
+    navigation?.addEventListener('navigate', traversal);
     document.addEventListener('click', link, true);
     return () => {
-      window.navigation?.removeEventListener('navigate', traversal);
+      navigation?.removeEventListener('navigate', traversal);
       document.removeEventListener('click', link, true);
     };
   }, [dirty]);

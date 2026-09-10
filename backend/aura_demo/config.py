@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 import stat
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlsplit
+from sqlalchemy.engine import make_url
 
 
 class ConfigurationError(RuntimeError):
@@ -15,14 +16,16 @@ class ConfigurationError(RuntimeError):
 
 @dataclass(frozen=True)
 class DemoConfig:
-    state_dir: Path
-    database_path: Path
-    key_path: Path
+    state_dir: Path | None
+    database_path: Path | None
+    key_path: Path | None
     external_origin: str
     static_dir: Path | None
     frame_origins: tuple[str, ...]
     testing: bool
     clock: object | None
+    database_url: str | None = field(default=None, repr=False)
+    secret_key: str | None = field(default=None, repr=False)
 
 
 def same_file(a: Path, b: Path) -> bool:
@@ -96,15 +99,33 @@ def load_config(values: dict | None = None) -> DemoConfig:
     testing = bool(values.get("TESTING", False))
     state_value = get("AURA_DEMO_STATE_DIR")
     external = get("AURA_EXTERNAL_ORIGIN")
-    if not state_value or not external:
+    database_url = get("AURA_DATABASE_URL")
+    if not external or (not state_value and not database_url):
         raise ConfigurationError(
-            "AURA_DEMO_STATE_DIR and AURA_EXTERNAL_ORIGIN are required"
+            "AURA_EXTERNAL_ORIGIN and an explicit Aura storage mode are required"
         )
     allow_http = get("AURA_ALLOW_INSECURE_LOOPBACK") in (True, "1")
     external = origin(external, allow_http=allow_http)
-    state, database, key = validate_paths(
-        state_value, values.get("AURA_DEMO_RECOVERY_DIR")
-    )
+    secret_key = None
+    if database_url:
+        if state_value:
+            raise ConfigurationError("Choose one Aura storage mode")
+        try:
+            parsed = make_url(database_url)
+            if parsed.drivername != "postgresql+psycopg" or not parsed.database:
+                raise ValueError("unsupported database")
+            if not testing and (not parsed.host or not parsed.username or not parsed.password):
+                raise ValueError("missing database configuration")
+        except Exception:
+            raise ConfigurationError("Use an explicit Aura PostgreSQL connection") from None
+        secret_key = get("AURA_SECRET_KEY")
+        if not isinstance(secret_key, str) or len(secret_key) < 32:
+            raise ConfigurationError("AURA_SECRET_KEY must contain at least 32 characters")
+        state = database = key = None
+    else:
+        state, database, key = validate_paths(
+            state_value, values.get("AURA_DEMO_RECOVERY_DIR")
+        )
     static_value = get("AURA_DEMO_STATIC_DIR")
     static = Path(static_value).resolve() if static_value else None
     frames = tuple(
@@ -113,11 +134,14 @@ def load_config(values: dict | None = None) -> DemoConfig:
         if item.strip()
     )
     return DemoConfig(
-        state, database, key, external, static, frames, testing, values.get("NOW")
+        state, database, key, external, static, frames, testing, values.get("NOW"),
+        database_url, secret_key,
     )
 
 
 def require_state(config: DemoConfig) -> str:
+    if config.database_url:
+        return config.secret_key
     for path, mode in (
         (config.state_dir, 0o700),
         (config.key_path, 0o600),
