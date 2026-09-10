@@ -14,11 +14,16 @@ the two package pins synchronized when backend dependencies change. It uses
 Python 3.13 and runs:
 
 ```sh
-npm run build:web
+npx --yes npm@11.19.1 ci
+npx --yes npm@11.19.1 run build:web
 ```
 
-That creates `client/dist`. `vercel.json` includes both `client/dist` and the
-Python backend in the `app.py` function bundle. The root `app.py` entry point
+Both commands pin npm so the host's bundled version cannot violate the
+repository's required tool version. The explicit install is necessary because
+Flask framework detection does not install Expo's Node dependencies itself.
+
+That creates `client/dist`. The explicit Flask preset in `vercel.json` bundles
+the export and Python backend together. The root `app.py` entry point
 sets that export as the default `AURA_DEMO_STATIC_DIR`; an explicitly supplied
 value remains available for local serving and tests.
 

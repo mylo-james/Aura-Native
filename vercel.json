@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "flask",
-  "buildCommand": "npm run build:web",
+  "installCommand": "npx --yes npm@11.19.1 ci",
+  "buildCommand": "npx --yes npm@11.19.1 run build:web",
   "regions": ["cle1"],
   "crons": [
     {
