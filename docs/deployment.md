@@ -19,7 +19,9 @@ npx --yes npm@11.19.1 run build:web
 ```
 
 Both commands pin npm so the host's bundled version cannot violate the
-repository's required tool version. The explicit install is necessary because
+repository's required tool version. Both run in `buildCommand`, after Vercel's
+native Python install. Do not set an npm-only `installCommand`: that replaces
+Python dependency installation and produces a function that fails on import.
 Flask framework detection does not install Expo's Node dependencies itself.
 
 That creates `client/dist`. The explicit Flask preset in `vercel.json` bundles
@@ -64,8 +66,10 @@ certificate and hostname verification with the pinned Certifi trust bundle.
    candidate. Keep the portfolio embed disabled until live verification passes.
 4. Assign `aura.mjames.dev`, then verify direct load and reload of an Expo route,
    same-origin `/api` calls, HTTPS host-only session behavior, and protected
-   cleanup on that exact origin. Vercel-generated aliases are intentionally not
-   accepted by the application's exact Host check.
+   cleanup on that exact origin. Also trigger the native scheduled cleanup and
+   verify its result. Only authenticated GET requests to the cleanup path may
+   use the exact platform-provided `VERCEL_URL`; visitor routes still require
+   the canonical host.
 5. Enable the portfolio embed and verify the real iframe from `https://mjames.dev`.
    Confirm CSP contains only the configured frame ancestors. The declared Cron
    becomes active with the production deployment, so the authenticated cleanup
@@ -78,7 +82,7 @@ arbitrary Vercel preview alias an accepted application origin.
 ## Cleanup and rate limits
 
 The maintenance route is `GET /api/maintenance/cleanup`, scheduled daily at
-08:23 UTC. Vercel sends `Authorization: Bearer $CRON_SECRET` when `CRON_SECRET`
+08:23 UTC (Hobby can run it within the scheduled hour). Vercel sends `Authorization: Bearer $CRON_SECRET` when `CRON_SECRET`
 is configured. The route must reject all other callers and be idempotent: a
 late or repeated physical delete is safe because expired demo sessions are
 already rejected logically after 24 hours.

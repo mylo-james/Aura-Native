@@ -37,6 +37,17 @@ from .domain import cleanup
 from .errors import ApiError, error_response
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "migrations-demo"
+CRON_PATH = "/api/maintenance/cleanup"
+
+
+def vercel_cron_host(config) -> str | None:
+    """Return the one Vercel deployment host that may invoke the Cron route."""
+    if not config.database_url or os.environ.get("VERCEL") != "1":
+        return None
+    candidate = os.environ.get("VERCEL_URL", "")
+    if not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.vercel\.app", candidate):
+        raise ConfigurationError("VERCEL_URL must be an exact Vercel deployment host")
+    return candidate
 
 
 def prepare_state(config):
@@ -81,6 +92,9 @@ def create_app(overrides=None, *, initialize=False):
         raise ConfigurationError("A production web export is required before serving")
     app = Flask(__name__, static_folder=None)
     secure = config.external_origin.startswith("https:")
+    canonical_host = urlsplit(config.external_origin).netloc
+    cron_host = vercel_cron_host(config)
+    trusted_hosts = [urlsplit(config.external_origin).hostname] + ([cron_host] if cron_host else [])
     app.config.update(
         TESTING=config.testing,
         DEMO_CONFIG=config,
@@ -112,7 +126,7 @@ def create_app(overrides=None, *, initialize=False):
         PERMANENT_SESSION_LIFETIME=timedelta(hours=24),
         WTF_CSRF_TIME_LIMIT=3600,
         WTF_CSRF_SSL_STRICT=False,
-        TRUSTED_HOSTS=[urlsplit(config.external_origin).hostname],
+        TRUSTED_HOSTS=trusted_hosts,
         COMPRESS_MIN_SIZE=500,
         COMPRESS_BR_LEVEL=6,
         COMPRESS_ALGORITHM=["br", "gzip"],
@@ -166,8 +180,15 @@ def create_app(overrides=None, *, initialize=False):
     @app.before_request
     def request_boundary():
         g.request_id = str(uuid4())
-        # Host stays exact; only the limiter uses Vercel's validated peer header.
-        if request.host != urlsplit(config.external_origin).netloc:
+        is_cron_route = (
+            cron_host is not None
+            and request.host == cron_host
+            and request.method == "GET"
+            and request.path == CRON_PATH
+        )
+        # Visitor traffic stays canonical. Vercel's generated deployment host can
+        # reach only the scheduled cleanup route, whose handler still checks its secret.
+        if request.host != canonical_host and not is_cron_route:
             raise ApiError(400, "invalid_host", "This host is not configured for Aura.")
         if request.path.startswith("/api/") and request.url_rule is None:
             abort(404)
@@ -287,7 +308,7 @@ def create_app(overrides=None, *, initialize=False):
             limiter.storage.prune_expired()
         click.echo(f"Removed {removed} expired demo sessions.")
 
-    @app.get("/api/maintenance/cleanup")
+    @app.get(CRON_PATH)
     def scheduled_cleanup():
         expected = os.environ.get("CRON_SECRET", "")
         supplied = request.headers.get("Authorization", "")

@@ -12,6 +12,8 @@ from aura_demo.config import ConfigurationError, load_config
 from aura_demo.db import DemoSession, db
 
 ORIGIN = "https://aura.example.test"
+VERCEL_HOST = "aura-production-123.vercel.app"
+VERCEL_ORIGIN = f"https://{VERCEL_HOST}"
 SECRET = "serverless-contract-secret-only-" * 2
 TEST_URL = os.environ.get("AURA_SERVERLESS_TEST_DATABASE_URL")
 
@@ -80,6 +82,21 @@ def hosted_app():
         db.engine.dispose()
 
 
+@pytest.fixture
+def vercel_hosted_app(monkeypatch):
+    if not isolated_test_database(TEST_URL):
+        pytest.skip("Requires explicitly isolated local aura_serverless_test database")
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("VERCEL_URL", VERCEL_HOST)
+    monkeypatch.setenv("CRON_SECRET", SECRET)
+    app = create_app(hosted_settings(TESTING=True, AURA_DATABASE_URL=TEST_URL), initialize=True)
+    with app.app_context(), db.engine.begin() as connection:
+        connection.execute(text("TRUNCATE demo_sessions, aura_rate_limit_buckets CASCADE"))
+    yield app
+    with app.app_context():
+        db.engine.dispose()
+
+
 def start(client):
     token = client.get("/api/demo", base_url=ORIGIN).json["csrfToken"]
     response = client.post("/api/demo", base_url=ORIGIN, json={"timezone": "UTC"},
@@ -120,6 +137,38 @@ def test_daily_cleanup_requires_secret_and_only_removes_expired_sessions(hosted_
     with hosted_app.app_context(), db.engine.connect() as connection:
         assert connection.scalar(select(db.func.count()).select_from(DemoSession)) == 1
         assert connection.scalar(text("SELECT count(*) FROM aura_rate_limit_buckets WHERE bucket_key=:key"), {"key": "a" * 64}) == 0
+
+
+def test_vercel_cron_host_allows_only_authenticated_cleanup(vercel_hosted_app):
+    client = vercel_hosted_app.test_client()
+    headers = {"Authorization": "Bearer " + SECRET}
+    response = client.get("/api/maintenance/cleanup", base_url=VERCEL_ORIGIN, headers=headers)
+    assert response.status_code == 200
+    assert response.json["expiredSessionsRemoved"] == 0
+    assert response.headers["Cache-Control"] == "no-store"
+
+    for auth in (None, "Bearer wrong", "Bearer café"):
+        response = client.get(
+            "/api/maintenance/cleanup",
+            base_url=VERCEL_ORIGIN,
+            headers={"Authorization": auth} if auth else {},
+        )
+        assert response.status_code == 404
+
+    assert client.get("/api/health", base_url=VERCEL_ORIGIN).status_code == 400
+    assert client.post("/api/maintenance/cleanup", base_url=VERCEL_ORIGIN, headers=headers).status_code == 400
+    assert client.head("/api/maintenance/cleanup", base_url=VERCEL_ORIGIN, headers=headers).status_code == 400
+    assert client.get("/api/maintenance/cleanup", base_url="https://other.vercel.app", headers=headers).status_code == 400
+    assert client.get("/about", base_url=VERCEL_ORIGIN, headers=headers).status_code == 400
+    assert client.get("/api/maintenance/cleanup", base_url=ORIGIN, headers=headers).status_code == 200
+
+
+@pytest.mark.parametrize("host", ["", "https://aura.vercel.app", "aura.vercel.app:443", "aura.vercel.app/path", "user@aura.vercel.app", "*.vercel.app", "AURA.vercel.app", "aura.preview.vercel.app"])
+def test_invalid_vercel_cron_host_fails_closed(monkeypatch, tmp_path, host):
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("VERCEL_URL", host)
+    with pytest.raises(ConfigurationError, match="VERCEL_URL"):
+        create_app(hosted_settings(TESTING=True, AURA_DEMO_STATIC_DIR=str(tmp_path)))
 
 
 def test_vercel_anonymous_reads_share_validated_peer_keys(hosted_app, monkeypatch):

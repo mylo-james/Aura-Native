@@ -1,9 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "flask",
-  "installCommand": "npx --yes npm@11.19.1 ci",
-  "buildCommand": "npx --yes npm@11.19.1 run build:web",
-  "regions": ["cle1"],
+  "buildCommand": "npx --yes npm@11.19.1 ci && npx --yes npm@11.19.1 run build:web",
+  "regions": [
+    "cle1"
+  ],
   "crons": [
     {
       "path": "/api/maintenance/cleanup",
