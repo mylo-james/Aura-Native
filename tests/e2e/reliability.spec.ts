@@ -56,6 +56,55 @@ test('retries a refreshed CSRF token without losing the pending draft', async ({
   await removeRoute();
 });
 
+test('coalesces bootstrap refreshes before the first demo POST', async ({page}) => {
+  let bootstrapReads = 0;
+  let initialBootstrapRequested!: () => void;
+  const initialBootstrap = new Promise<void>((resolve) => {
+    initialBootstrapRequested = resolve;
+  });
+  let releaseInitialBootstrap!: () => void;
+  const initialBootstrapHeld = new Promise<void>((resolve) => {
+    releaseInitialBootstrap = resolve;
+  });
+  const postStatuses: number[] = [];
+  await page.route('**/api/demo', async (route) => {
+    if (route.request().method() === 'GET') {
+      bootstrapReads++;
+      if (bootstrapReads === 1) {
+        initialBootstrapRequested();
+        await initialBootstrapHeld;
+      }
+      const response = await route.fetch();
+      await route.fulfill({response});
+      return;
+    }
+    if (route.request().method() === 'POST') {
+      const response = await route.fetch();
+      postStatuses.push(response.status());
+      await route.fulfill({response});
+      return;
+    }
+    await route.continue();
+  });
+  await page.goto('/');
+  await initialBootstrap;
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event('focus'));
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.waitForTimeout(100);
+  expect(bootstrapReads).toBe(1);
+  releaseInitialBootstrap();
+  await expect(
+    page.getByRole('button', {name: 'Try Aura', exact: true}),
+  ).toBeEnabled();
+  await page.getByRole('button', {name: 'Try Aura', exact: true}).click();
+  await expect(
+    page.getByRole('heading', {name: 'How are you, right now?'}),
+  ).toBeVisible();
+  expect(postStatuses).toEqual([201]);
+});
+
 for (const [name, status, headers, code] of [
   ['a 500 response', 500, {}, 'server_error'],
   ['a 429 response', 429, {'Retry-After': '1'}, 'rate_limited'],

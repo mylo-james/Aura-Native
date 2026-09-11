@@ -49,6 +49,7 @@ function SessionProvider({children}: {children: ReactNode}) {
   const [error, setError] = useState<unknown>(null);
   const [expired, setExpired] = useState(false);
   const sessionOperation = useRef<Promise<Demo> | null>(null);
+  const bootstrapOperation = useRef<Promise<Demo> | null>(null);
   const [draft, dispatch] = useReducer(draftReducer, undefined, () =>
     freshDraft(newOperationId()),
   );
@@ -86,20 +87,28 @@ function SessionProvider({children}: {children: ReactNode}) {
       });
     }
   }, [adopt]);
-  const bootstrapRefresh = useCallback(async () => {
-    const started = epoch.current;
-    try {
-      const result = await request<Demo>('/api/demo');
-      if (started !== epoch.current) return demoRef.current ?? result;
-      if (demoRef.current?.active && !result.active) setExpired(true);
-      setError(null);
-      return adopt(result);
-    } catch (e) {
-      setError(e);
-      throw e;
-    } finally {
-      setLoading(false);
-    }
+  const bootstrapRefresh = useCallback(() => {
+    if (bootstrapOperation.current) return bootstrapOperation.current;
+    const operation = (async () => {
+      const started = epoch.current;
+      try {
+        const result = await request<Demo>('/api/demo');
+        if (started !== epoch.current) return demoRef.current ?? result;
+        if (demoRef.current?.active && !result.active) setExpired(true);
+        setError(null);
+        return adopt(result);
+      } catch (e) {
+        setError(e);
+        throw e;
+      } finally {
+        setLoading(false);
+      }
+    })().finally(() => {
+      if (bootstrapOperation.current === operation)
+        bootstrapOperation.current = null;
+    });
+    bootstrapOperation.current = operation;
+    return operation;
   }, [adopt]);
   const refresh = useCallback(
     () => sessionOperation.current ?? bootstrapRefresh(),
@@ -149,6 +158,7 @@ function SessionProvider({children}: {children: ReactNode}) {
   const write = useCallback(
     async <T,>(path: string, method: string, body?: unknown) => {
       const started = epoch.current;
+      if (bootstrapOperation.current) await bootstrapOperation.current;
       let csrf = demoRef.current?.csrfToken;
       if (!csrf) csrf = (await bootstrapRefresh()).csrfToken;
       if (started !== epoch.current)
